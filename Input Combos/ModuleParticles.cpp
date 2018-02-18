@@ -52,8 +52,6 @@ update_status ModuleParticles::Update()
 		{
 				App->render->Blit(graphics, p->position.x, p->position.y, &(p->anim.GetCurrentFrame()));
 		}
-
-		
 	}
 
 	
