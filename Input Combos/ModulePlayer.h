@@ -7,6 +7,18 @@
 
 struct SDL_Texture;
 
+#define MAX_INPUT_BUFFER 20
+enum inputs
+{
+	NONE,
+	UP,
+	DOWN,
+	RIGHT,
+	LEFT,
+	PUNCH
+};
+
+
 class ModulePlayer : public Module
 {
 public:
@@ -17,10 +29,36 @@ public:
 	bool CleanUp();
 
 
-public:
+
+private:
 
 	SDL_Texture* graphics = nullptr;
 	iPoint pos;
+	Animation* current_animation;
+	bool crouching = false;
+	bool punching = false; 
+	bool jumping = false;
+	bool walking_back = false;
+	bool walking_forward = false;
+	bool hadowken = false;
+	bool tatsumaki = false;
+
+	Animation Idle;
+	Animation Crouch;
+	Animation Standing_punch;
+	Animation Crouching_punch;
+	Animation Walk_forward;
+	Animation Walk_back;
+	Animation Jump;
+	Animation Hadowken;
+	Animation Tatsumaki;
+
+	inputs input_buffer[MAX_INPUT_BUFFER];
+
+	bool Check_for_hadowken();
+	bool Check_for_tatsumaki();
+
+	void Push_into_buffer(inputs);
 };
 
 #endif

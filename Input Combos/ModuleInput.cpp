@@ -59,6 +59,8 @@ update_status ModuleInput::Update()
 		}
 	}
 
+
+
 	if (keyboard[SDL_SCANCODE_ESCAPE])
 	{
 		return update_status::UPDATE_STOP;

@@ -31,7 +31,7 @@
     <ClCompile Include="ModuleInput.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleAudio_1.cpp">
+    <ClCompile Include="Module_Audio_1.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
   </ItemGroup>
