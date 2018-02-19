@@ -8,26 +8,29 @@
 struct SDL_Texture;
 
 #define MAX_INPUT_BUFFER 20
-enum inputs
+enum input
 {
 	NONE,
 	UP,
 	DOWN,
 	RIGHT,
 	LEFT,
-	PUNCH
+	PUNCH,
+	HADOWKEN,
+	TATSUMAKI,
 };
 
 enum character_state
 {
+	IDLE,
 	WALKING_FORWARD,
 	WALKING_BACK,
 	CROUCHING,
 	JUMPING,
 	STANDING_PUNCHING,
 	CROUCHING_PUNCHING,
-	HADOWKEN,
-	TATSUMAKI
+	HADOWKENING,
+	TATSUMAKING
 };
 
 class ModulePlayer : public Module
@@ -45,6 +48,7 @@ private:
 	iPoint pos;
 	Animation* current_animation;
 	character_state current_state;
+	input current_input;
 
 	Animation Idle;
 	Animation Crouch;
@@ -56,14 +60,12 @@ private:
 	Animation Hadowken;
 	Animation Tatsumaki;
 
-	bool up, down, left, right, punch, hadowken, tatsumaki = false;
-
-	inputs input_buffer[MAX_INPUT_BUFFER];
+	input input_buffer[MAX_INPUT_BUFFER];
 
 	bool Check_for_hadowken();
 	bool Check_for_tatsumaki();
 
-	void Push_into_buffer(inputs);
+	void Push_into_buffer(input);
 };
 
 #endif

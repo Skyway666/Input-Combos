@@ -85,59 +85,49 @@ update_status ModulePlayer::Update()
 	}
 
 	//Check the input buffer to see if the player has preformed a combination (each combination should be loaded from an XML
-	hadowken = Check_for_hadowken();
-	tatsumaki = Check_for_tatsumaki();
+	//hadowken = Check_for_hadowken();
+	//tatsumaki = Check_for_tatsumaki();
 
 
 	// If no special move has been performed, be sure to assign the correct action depending on the last input recieved
 
-	if (!hadowken && !tatsumaki)
-	{
 		switch (input_buffer[MAX_INPUT_BUFFER - 1])
 		{
 			case DOWN:
 			{
-				down = true;
+				current_input = DOWN;
 				break;
 			}
 			case LEFT:
 			{
-				left = true;
+				current_input = LEFT;
 				break;
 			}
 			case RIGHT:
 			{
-				right = true;
+				current_input = RIGHT;
 				break;
 			}
 			case UP:
 			{
-				up = true;
+				current_input = UP;
 				break;
 			}
 			case PUNCH:
 			{
-				punch = true;
+				current_input = PUNCH;
 				break;
 			}
 		}
-	}
 
 
 	//Make ryu perform the right animation depending on the previous events
-
 	current_animation = &Idle;
-
 
 
 
 	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 80*4, 99*4);
 
-	if(App->input->keyboard[SDL_SCANCODE_S])
-	{ 
-		pos.x++;
-		pos.y++;
-	}
 
 	return UPDATE_CONTINUE;
 }
@@ -174,7 +164,7 @@ bool ModulePlayer::Check_for_tatsumaki()
 	return false;
 }
 
-void ModulePlayer::Push_into_buffer(inputs input)
+void ModulePlayer::Push_into_buffer(input input)
 {
 	input_buffer[0] = NONE;
 
