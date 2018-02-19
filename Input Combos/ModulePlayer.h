@@ -7,7 +7,7 @@
 
 struct SDL_Texture;
 
-#define MAX_INPUT_BUFFER 20
+#define MAX_INPUT_BUFFER 30
 enum input
 {
 	NONE,
@@ -16,8 +16,6 @@ enum input
 	RIGHT,
 	LEFT,
 	PUNCH,
-	HADOWKEN,
-	TATSUMAKI,
 };
 
 enum character_state
@@ -29,8 +27,8 @@ enum character_state
 	JUMPING,
 	STANDING_PUNCHING,
 	CROUCHING_PUNCHING,
-	HADOWKENING,
-	TATSUMAKING
+	HADOWKEN,
+	TATSUMAKI,
 };
 
 class ModulePlayer : public Module
@@ -48,7 +46,7 @@ private:
 	iPoint pos;
 	Animation* current_animation;
 	character_state current_state;
-	input current_input;
+	character_state wanted_state;
 
 	Animation Idle;
 	Animation Crouch;
@@ -62,10 +60,11 @@ private:
 
 	input input_buffer[MAX_INPUT_BUFFER];
 
-	bool Check_for_hadowken();
-	bool Check_for_tatsumaki();
+	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
+	bool Check_for_tatsumaki();			//Checks the input buffer looking for the tatsumaki button combination
+	bool Cancelable_current_state();	//Checks if the character's current state can be cancelled in other states (It should be some sort of mechanism that allows to compare wanted action with current action)
 
-	void Push_into_buffer(input);
+	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
 };
 
 #endif
