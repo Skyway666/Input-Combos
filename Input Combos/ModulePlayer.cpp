@@ -90,92 +90,45 @@ update_status ModulePlayer::Update()
 
 
 	// If no special move has been performed, be sure to assign the correct action depending on the last input recieved
+
 	if (!hadowken && !tatsumaki)
 	{
 		switch (input_buffer[MAX_INPUT_BUFFER - 1])
 		{
 			case DOWN:
 			{
-				crouching = true;
+				down = true;
+				break;
 			}
 			case LEFT:
 			{
-				walking_back = true;
+				left = true;
+				break;
 			}
 			case RIGHT:
 			{
-				walking_forward = true;
+				right = true;
+				break;
 			}
 			case UP:
 			{
-				jumping = true;
+				up = true;
+				break;
 			}
 			case PUNCH:
 			{
-				punching = true;
+				punch = true;
+				break;
 			}
 		}
 	}
+
 
 	//Make ryu perform the right animation depending on the previous events
 
 	current_animation = &Idle;
 
-	/*if (walking_back && !jumping)
-	{
-		current_animation = &Walk_back;
-		walking_back = false;
-	}
 
-	if (walking_forward && !jumping)
-	{
-		current_animation = &Walk_forward;
-		walking_forward = false;
-	}
-	
-	if (crouching && !jumping)
-	{
-		current_animation = &Crouch;
-		crouching = false;
-	}
-
-	if (punching && !crouching && !jumping)
-	{
-		current_animation = &Standing_punch;
-
-		if (current_animation->Finished())
-		{
-			punching = false;
-		}
-
-	}
-
-	if (punching && crouching && !jumping)
-	{
-		current_animation = &Crouching_punch;
-		if (current_animation->Finished())
-		{
-			punching = false;
-		}
-	}
-
-	if (hadowken)
-	{
-		current_animation = &Hadowken;
-		if (current_animation->Finished())
-		{
-			hadowken = false;
-		}
-	}
-	 
-	if (tatsumaki && !hadowken)
-	{
-		current_animation = &Tatsumaki;
-		if (current_animation->Finished())
-		{
-			tatsumaki = false;
-		}
-	}*/
 
 
 	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 80*4, 99*4);

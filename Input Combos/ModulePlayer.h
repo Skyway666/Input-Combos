@@ -18,6 +18,17 @@ enum inputs
 	PUNCH
 };
 
+enum character_state
+{
+	WALKING_FORWARD,
+	WALKING_BACK,
+	CROUCHING,
+	JUMPING,
+	STANDING_PUNCHING,
+	CROUCHING_PUNCHING,
+	HADOWKEN,
+	TATSUMAKI
+};
 
 class ModulePlayer : public Module
 {
@@ -28,20 +39,12 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-
-
 private:
 
 	SDL_Texture* graphics = nullptr;
 	iPoint pos;
 	Animation* current_animation;
-	bool crouching = false;
-	bool punching = false; 
-	bool jumping = false;
-	bool walking_back = false;
-	bool walking_forward = false;
-	bool hadowken = false;
-	bool tatsumaki = false;
+	character_state current_state;
 
 	Animation Idle;
 	Animation Crouch;
@@ -52,6 +55,8 @@ private:
 	Animation Jump;
 	Animation Hadowken;
 	Animation Tatsumaki;
+
+	bool up, down, left, right, punch, hadowken, tatsumaki = false;
 
 	inputs input_buffer[MAX_INPUT_BUFFER];
 
