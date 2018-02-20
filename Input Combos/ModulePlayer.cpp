@@ -32,35 +32,60 @@ bool ModulePlayer::Init()
 
 	//Set ryu's initial position
 	pos.x = 425;
-	pos.y = 400;
+	pos.y = 300;
 	
 
-	Idle.PushBack({ 0,0,80,99 });
-	Idle.PushBack({ 80,0,80,99 });
-	Idle.PushBack({ 160,0,80,99 });
-	Idle.PushBack({ 240,0,80,99 });	
+	Idle.PushBack({ 0,0,130,123 });
+	Idle.PushBack({ 130,0,130,123 });
+	Idle.PushBack({ 130*2,0,130,123 });
+	Idle.PushBack({ 130*3,0,130,123  });
 	
 	Idle.loop = true;
 	Idle.speed = 0.2;
 
-	Walk_forward.PushBack({ 320,0,80,99 });
-	Walk_forward.PushBack({ 400,0,80,99 });
-	Walk_forward.PushBack({ 480,0,80,99 });
-	Walk_forward.PushBack({ 560,0,80,99 });
-	Walk_forward.PushBack({ 640,0,80,99 });
+	Walk_forward.PushBack({ 130 * 4,0,130,123 });
+	Walk_forward.PushBack({ 130 * 5,0,130,123 });
+	Walk_forward.PushBack({ 130 * 6,0,130,123 });
+	Walk_forward.PushBack({ 130 * 7,0,130,123 });
+	Walk_forward.PushBack({ 130 * 8,0,130,123 });
 	
 	Walk_forward.loop = true;
 	Walk_forward.speed = 0.2;
 
-	Walk_back.PushBack({ 640,0,80,99 });
-	Walk_back.PushBack({ 560,0,80,99 });
-	Walk_back.PushBack({ 480,0,80,99 });
-	Walk_back.PushBack({ 400,0,80,99 });
-	Walk_back.PushBack({ 320,0,80,99 });
+	Walk_back.PushBack({ 130 * 8,0,130,123 });
+	Walk_back.PushBack({ 130 * 7,0,130,123 });
+	Walk_back.PushBack({ 130 * 6,0,130,123 });
+	Walk_back.PushBack({ 130 * 5,0,130,123 });
+	Walk_back.PushBack({ 130 * 4,0,130,123 });
 
 	Walk_back.loop = true;
 	Walk_back.speed = 0.2;
 	
+	Crouch.PushBack({ 130 * 3,123,130,123 });
+	Crouch.PushBack({ 130 * 4,123,130,123 });
+
+	Crouch.loop = false;
+	Crouch.speed = 0.2;
+
+	Standing_punch.PushBack({ 130 * 5,123,130,123 });
+	Standing_punch.PushBack({ 130 * 6,123,130,123 });
+	Standing_punch.PushBack({ 130 * 7,123,130,123 });
+	Standing_punch.PushBack({ 130 * 8,123,130,123 });
+	Standing_punch.PushBack({ 130 * 9,123,130,123 });
+
+	Standing_punch.loop = false;
+	Standing_punch.speed = 0.2;
+
+	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
+	Hadowken.PushBack({ 130 * 11,123  ,130,123 });
+	Hadowken.PushBack({ 0		,123 * 2,130,123 });
+	Hadowken.PushBack({ 130     ,123 * 2,130,123 });
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
+
+	Hadowken.loop = false;
+	Hadowken.speed = 0.2;
+
+	current_animation = &Idle;
 	return true;
 }
 
@@ -82,11 +107,7 @@ update_status ModulePlayer::Update()
 
 	// Check what inputs are being pressed in this frame, and push them into the input buffer (TODO 1)
 	bool button_pressed = false;
-	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_REPEAT)
-	{
-		Push_into_buffer(DOWN);
-		button_pressed = true;
-	}
+
 	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_REPEAT)
 	{
 		Push_into_buffer(LEFT);
@@ -95,6 +116,11 @@ update_status ModulePlayer::Update()
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_REPEAT)
 	{
 		Push_into_buffer(RIGHT);
+		button_pressed = true;
+	}	
+	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_REPEAT)
+	{
+		Push_into_buffer(DOWN);
 		button_pressed = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_UP] == KEY_DOWN)
@@ -107,7 +133,7 @@ update_status ModulePlayer::Update()
  		Push_into_buffer(PUNCH);
 		button_pressed = true;
 	}
-	//We need to push the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
+	//We need to move the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
 	if(!button_pressed)
 	{
 		Push_into_buffer(NONE); 
@@ -158,19 +184,32 @@ update_status ModulePlayer::Update()
 			case PUNCH:
 			{
 				if (current_state == CROUCHING)
-					wanted_state = STANDING_PUNCHING;
-				else
 					wanted_state = CROUCHING_PUNCHING;
+				else
+					wanted_state = STANDING_PUNCHING;
 				break;
 			}
 		}
 	}
 
-	//Check if the current animation is cancelable with Cancelable_current_state(). If it is cancelable, assign the wanted_state as current_state and set the current animation. (TODO 4)
-	
-	if (Cancelable_current_state())
-	{
-		current_state = wanted_state;
+	// Check if the wanted state is different from the current state. If it is not, we do nothing. If it is, we check if the current state can be canceled with
+	// Cancelable_current_state(), and if it is cancelable, we set the current state to the wanted one. If it is not cancelable, we need to make sure that when the current animation is finished, the current state goes back to IDLE,
+	// and the animation which was being done is reset. After that, we update the animation depending on the current state. 
+	// (TODO 4)
+	if (wanted_state != current_state) {
+		if (Cancelable_current_state())
+		{
+			current_state = wanted_state;
+		}
+		else
+		{
+			if (current_animation->Finished())
+			{
+				current_state = IDLE;
+				Standing_punch.Reset();
+				Hadowken.Reset();
+			}
+		}
 
 		switch (current_state)
 		{
@@ -179,16 +218,14 @@ update_status ModulePlayer::Update()
 				current_animation = &Idle;
 				break;
 			}
-			case WALKING_FORWARD: 
+			case WALKING_FORWARD:
 			{
 				current_animation = &Walk_forward;
-				pos.x+=5; //Don't forget to put limits to the movement
 				break;
 			}
 			case WALKING_BACK:
 			{
 				current_animation = &Walk_back;
-				pos.x-=5;
 				break;
 			}
 			case CROUCHING:
@@ -221,12 +258,27 @@ update_status ModulePlayer::Update()
 				current_animation = &Tatsumaki;
 				break;
 			}
-			
+
 		}
 	}
 
+	// Movement
+	switch (current_state)
+	{
+		case WALKING_FORWARD:
+		{
+			pos.x += 5;
+			break;
+		}
+		case WALKING_BACK:
+		{
+			pos.x -= 5;
+			break;
+		}
+	}
 
-	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 80*4, 99*4);
+	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 130*4, 123*4);
+
 
 
 	return UPDATE_CONTINUE;
