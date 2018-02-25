@@ -7,7 +7,7 @@
 
 struct SDL_Texture;
 
-#define MAX_INPUT_BUFFER 20
+#define MAX_INPUT_BUFFER 15
 enum input
 {
 	NONE,

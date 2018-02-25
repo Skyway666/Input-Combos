@@ -85,6 +85,34 @@ bool ModulePlayer::Init()
 	Hadowken.loop = false;
 	Hadowken.speed = 0.2;
 
+
+	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 });
+
+	Crouching_punch.loop = false;
+	Crouching_punch.speed = 0.2;
+
+	Tatsumaki.PushBack({ 130 * 8 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 2 ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 3 ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 4 ,123 * 3,130,123 });
+
+	Tatsumaki.loop = false;
+	Tatsumaki.speed = 0.2;
+	
 	current_animation = &Idle;
 	return true;
 }
@@ -108,26 +136,28 @@ update_status ModulePlayer::Update()
 	// Check what inputs are being pressed in this frame, and push them into the input buffer (TODO 1)
 	bool button_pressed = false;
 
-	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_REPEAT)
-	{
-		Push_into_buffer(LEFT);
-		button_pressed = true;
-	}
-	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_REPEAT)
-	{
-		Push_into_buffer(RIGHT);
-		button_pressed = true;
-	}	
 	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_REPEAT)
 	{
 		Push_into_buffer(DOWN);
 		button_pressed = true;
 	}
-	if (App->input->keyboard[SDL_SCANCODE_UP] == KEY_DOWN)
+	else if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_REPEAT)
+	{
+		Push_into_buffer(LEFT);
+		button_pressed = true;
+	}
+	else if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_REPEAT)
+	{
+		Push_into_buffer(RIGHT);
+		button_pressed = true;
+	}
+	else if (App->input->keyboard[SDL_SCANCODE_UP] == KEY_DOWN)
 	{
 		Push_into_buffer(UP);
 		button_pressed = true;
 	}
+
+
 	if (App->input->keyboard[SDL_SCANCODE_SPACE] == KEY_DOWN)
 	{
  		Push_into_buffer(PUNCH);
@@ -149,7 +179,8 @@ update_status ModulePlayer::Update()
 		wanted_state = TATSUMAKI;
 	}
 
-	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer) (TODO 3)
+	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
+	//depending on the current state, you may want different actions(TODO 3)
 	else
 	{
 		input current_input = input_buffer[MAX_INPUT_BUFFER - 1];
@@ -192,9 +223,10 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	// Check if the wanted state is different from the current state. If it is not, we do nothing. If it is, we check if the current state can be canceled with
-	// Cancelable_current_state(), and if it is cancelable, we set the current state to the wanted one. If it is not cancelable, we need to make sure that when the current animation is finished, the current state goes back to IDLE,
-	// and the animation which was being done is reset. After that, we update the animation depending on the current state. 
+	// Check if the wanted state is different from the current state. If it is, we check if the current state can be canceled with
+	// Cancelable_current_state(), and if it is cancelable, we set the current state to the wanted one. If it is not cancelable, we need to make sure that when the current 
+	// animation is finished, the current state goes back to the wanted state in this frame, and the animation which was being done is reset. After that, we update the 
+	// animation depending on the current state. 
 	// (TODO 4)
 	if (wanted_state != current_state) {
 		if (Cancelable_current_state())
@@ -205,12 +237,15 @@ update_status ModulePlayer::Update()
 		{
 			if (current_animation->Finished())
 			{
-				current_state = IDLE;
+				current_state = wanted_state;
 				Standing_punch.Reset();
 				Hadowken.Reset();
+				Crouching_punch.Reset();
+				Tatsumaki.Reset();
 			}
 		}
 
+		
 		switch (current_state)
 		{
 			case IDLE:
@@ -275,6 +310,11 @@ update_status ModulePlayer::Update()
 			pos.x -= 5;
 			break;
 		}
+		case TATSUMAKI:
+		{
+			pos.x += 7;
+			break;
+		}
 	}
 
 	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 130*4, 123*4);
@@ -312,7 +352,28 @@ bool ModulePlayer::Check_for_hadowken()
 
 bool ModulePlayer::Check_for_tatsumaki()
 {
-	return false;
+	int counter = 0;
+	for (int i = 0; (i < MAX_INPUT_BUFFER); i++)
+	{
+
+		if (input_buffer[i] == DOWN && counter == 0)
+		{
+			counter++;
+		}
+		if (input_buffer[i] == LEFT && counter == 1)
+		{
+			counter++;
+		}
+		if (input_buffer[i] == PUNCH && counter == 2)
+		{
+			counter++;
+		}
+	}
+
+	if (counter == 3)
+		return true;
+	else
+		return false;
 }
 
 void ModulePlayer::Push_into_buffer(input input)
