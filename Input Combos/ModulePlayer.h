@@ -4,8 +4,8 @@
 #include "Module.h"
 #include "Animation.h"
 #include "p2Point.h"
-
-
+#include <list>
+#include <string>
 #include "PugiXml/src/pugixml.hpp"
 
 struct SDL_Texture;
@@ -67,6 +67,9 @@ private:
 	Animation Tatsumaki;
 
 	input input_buffer[MAX_INPUT_BUFFER];
+
+	std::list<input> hadowken_inputs;
+	std::list<input> tatsumaki_inputs;
 
 	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
 	bool Check_for_tatsumaki();			//Checks the input buffer looking for the tatsumaki button combination

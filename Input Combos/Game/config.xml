@@ -1,5 +1,16 @@
 <!-- Config file for the game -->
 
 <config>
-  <some_data variabel ="1"/>
+  <directional_inputs>
+    <hadowken>
+      <input value ="down"/>
+      <input value ="right"/>
+      <input value ="punch"/>
+    </hadowken>
+    <tatsumaki>
+      <input value ="down"/>
+      <input value ="left"/>
+      <input value ="kick"/>
+    </tatsumaki>
+  </directional_inputs>
 </config>

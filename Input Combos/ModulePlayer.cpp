@@ -455,9 +455,68 @@ void ModulePlayer:: SetConfigData()
 
 	config = LoadConfig(config_file);
 
-	int variabel = config.child("some_data").attribute("variabel").as_int();
+	pugi::xml_node hadowken = config.child("directional_inputs").child("hadowken");
 
-	int super_variabel = variabel + 15;
+	pugi::xml_node iterator = hadowken.first_child();
+	while (iterator != nullptr)
+	{
+		std::string input_name = iterator.attribute("value").as_string();
+
+		if (input_name == "right")
+		{
+			hadowken_inputs.push_back(RIGHT);
+		}
+		if (input_name == "left")
+		{
+			hadowken_inputs.push_back(LEFT);
+		}
+		if (input_name == "down")
+		{
+			hadowken_inputs.push_back(DOWN);
+		}
+		if (input_name == "punch")
+		{
+			hadowken_inputs.push_back(PUNCH);
+		}
+		if (input_name == "kick")
+		{
+			hadowken_inputs.push_back(KICK);
+		}
+		iterator = iterator.next_sibling();
+	}
+
+	pugi::xml_node tatsumaki = config.child("directional_inputs").child("tatsumaki");
+
+	iterator = tatsumaki.first_child();
+	while (iterator != nullptr)
+	{
+		std::string input_name = iterator.attribute("value").as_string();
+
+		if (input_name == "right")
+		{
+			tatsumaki_inputs.push_back(RIGHT);
+		}
+		if (input_name == "left")
+		{
+			tatsumaki_inputs.push_back(LEFT);
+		}
+		if (input_name == "down")
+		{
+			tatsumaki_inputs.push_back(DOWN);
+		}
+		if (input_name == "punch")
+		{
+			tatsumaki_inputs.push_back(PUNCH);
+		}
+		if (input_name == "kick")
+		{
+			tatsumaki_inputs.push_back(KICK);
+		}
+		iterator = iterator.next_sibling();
+	}
+
+	int value = 1 + 1;
+
 }
 pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
 {
