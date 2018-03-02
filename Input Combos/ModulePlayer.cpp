@@ -29,89 +29,15 @@ bool ModulePlayer::Init()
 	{
 		input_buffer[i] = NONE;
 	}
-
+	//Ser animations
+	SetAnimations();
 	//Set ryu's initial position
 	pos.x = 425;
 	pos.y = 300;
+	//Set config data
+	SetConfigData();
 	
-
-	Idle.PushBack({ 0,0,130,123 });
-	Idle.PushBack({ 130,0,130,123 });
-	Idle.PushBack({ 130*2,0,130,123 });
-	Idle.PushBack({ 130*3,0,130,123  });
 	
-	Idle.loop = true;
-	Idle.speed = 0.2;
-
-	Walk_forward.PushBack({ 130 * 4,0,130,123 });
-	Walk_forward.PushBack({ 130 * 5,0,130,123 });
-	Walk_forward.PushBack({ 130 * 6,0,130,123 });
-	Walk_forward.PushBack({ 130 * 7,0,130,123 });
-	Walk_forward.PushBack({ 130 * 8,0,130,123 });
-	
-	Walk_forward.loop = true;
-	Walk_forward.speed = 0.2;
-
-	Walk_back.PushBack({ 130 * 8,0,130,123 });
-	Walk_back.PushBack({ 130 * 7,0,130,123 });
-	Walk_back.PushBack({ 130 * 6,0,130,123 });
-	Walk_back.PushBack({ 130 * 5,0,130,123 });
-	Walk_back.PushBack({ 130 * 4,0,130,123 });
-
-	Walk_back.loop = true;
-	Walk_back.speed = 0.2;
-	
-	Crouch.PushBack({ 130 * 3,123,130,123 });
-	Crouch.PushBack({ 130 * 4,123,130,123 });
-
-	Crouch.loop = false;
-	Crouch.speed = 0.2;
-
-	Standing_punch.PushBack({ 130 * 5,123,130,123 });
-	Standing_punch.PushBack({ 130 * 6,123,130,123 });
-	Standing_punch.PushBack({ 130 * 7,123,130,123 });
-	Standing_punch.PushBack({ 130 * 8,123,130,123 });
-	Standing_punch.PushBack({ 130 * 9,123,130,123 });
-
-	Standing_punch.loop = false;
-	Standing_punch.speed = 0.2;
-
-	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
-	Hadowken.PushBack({ 130 * 11,123  ,130,123 });
-	Hadowken.PushBack({ 0		,123 * 2,130,123 });
-	Hadowken.PushBack({ 130     ,123 * 2,130,123 });
-	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
-
-	Hadowken.loop = false;
-	Hadowken.speed = 0.2;
-
-
-	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 });
-
-	Crouching_punch.loop = false;
-	Crouching_punch.speed = 0.2;
-
-	Tatsumaki.PushBack({ 130 * 8 ,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
-	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130 * 2 ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130 * 3 ,123 * 3,130,123 });
-	Tatsumaki.PushBack({ 130 * 4 ,123 * 3,130,123 });
-
-	Tatsumaki.loop = false;
-	Tatsumaki.speed = 0.2;
 	
 	current_animation = &Idle;
 	return true;
@@ -394,4 +320,112 @@ bool ModulePlayer::Cancelable_current_state()
 		return true;
 	else
 		return false;
+}
+
+void ModulePlayer::SetAnimations()
+{
+	Idle.PushBack({ 0,0,130,123 });
+	Idle.PushBack({ 130,0,130,123 });
+	Idle.PushBack({ 130 * 2,0,130,123 });
+	Idle.PushBack({ 130 * 3,0,130,123 });
+
+	Idle.loop = true;
+	Idle.speed = 0.2;
+
+	Walk_forward.PushBack({ 130 * 4,0,130,123 });
+	Walk_forward.PushBack({ 130 * 5,0,130,123 });
+	Walk_forward.PushBack({ 130 * 6,0,130,123 });
+	Walk_forward.PushBack({ 130 * 7,0,130,123 });
+	Walk_forward.PushBack({ 130 * 8,0,130,123 });
+
+	Walk_forward.loop = true;
+	Walk_forward.speed = 0.2;
+
+	Walk_back.PushBack({ 130 * 8,0,130,123 });
+	Walk_back.PushBack({ 130 * 7,0,130,123 });
+	Walk_back.PushBack({ 130 * 6,0,130,123 });
+	Walk_back.PushBack({ 130 * 5,0,130,123 });
+	Walk_back.PushBack({ 130 * 4,0,130,123 });
+
+	Walk_back.loop = true;
+	Walk_back.speed = 0.2;
+
+	Crouch.PushBack({ 130 * 3,123,130,123 });
+	Crouch.PushBack({ 130 * 4,123,130,123 });
+
+	Crouch.loop = false;
+	Crouch.speed = 0.2;
+
+	Standing_punch.PushBack({ 130 * 5,123,130,123 });
+	Standing_punch.PushBack({ 130 * 6,123,130,123 });
+	Standing_punch.PushBack({ 130 * 7,123,130,123 });
+	Standing_punch.PushBack({ 130 * 8,123,130,123 });
+	Standing_punch.PushBack({ 130 * 9,123,130,123 });
+
+	Standing_punch.loop = false;
+	Standing_punch.speed = 0.2;
+
+	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
+	Hadowken.PushBack({ 130 * 11,123  ,130,123 });
+	Hadowken.PushBack({ 0		,123 * 2,130,123 });
+	Hadowken.PushBack({ 130     ,123 * 2,130,123 });
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
+
+	Hadowken.loop = false;
+	Hadowken.speed = 0.2;
+
+
+	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 });
+
+	Crouching_punch.loop = false;
+	Crouching_punch.speed = 0.2;
+
+	Tatsumaki.PushBack({ 130 * 8 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 10,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 130 * 11,123 * 2,130,123 });
+	Tatsumaki.PushBack({ 0       ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130     ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 2 ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 3 ,123 * 3,130,123 });
+	Tatsumaki.PushBack({ 130 * 4 ,123 * 3,130,123 });
+
+	Tatsumaki.loop = false;
+	Tatsumaki.speed = 0.2;
+}
+
+void ModulePlayer:: SetConfigData()
+{
+	pugi::xml_document	config_file;
+	pugi::xml_node		config;
+
+	config = LoadConfig(config_file);
+
+	int variabel = config.child("some_data").attribute("variabel").as_int();
+
+	int super_variabel = variabel + 15;
+}
+pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
+{
+	pugi::xml_node ret;
+
+	pugi::xml_parse_result result = config_file.load_file("config.xml");
+
+	if (result == NULL)
+	{
+		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
+	}
+	else
+		ret = config_file.child("config");
+
+	return ret;
 }

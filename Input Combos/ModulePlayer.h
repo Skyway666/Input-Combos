@@ -5,6 +5,9 @@
 #include "Animation.h"
 #include "p2Point.h"
 
+
+#include "PugiXml/src/pugixml.hpp"
+
 struct SDL_Texture;
 
 #define MAX_INPUT_BUFFER 15
@@ -65,6 +68,11 @@ private:
 	bool Cancelable_current_state();	//Checks if the character's current state can be cancelled in other states (It should be some sort of mechanism that allows to compare wanted action with current action)
 
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
+
+	//Functions for clarity
+	pugi::xml_node LoadConfig(pugi::xml_document& config_file) const;
+	void SetAnimations();
+	void SetConfigData();
 };
 
 #endif

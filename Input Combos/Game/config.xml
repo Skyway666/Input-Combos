@@ -1,0 +1,5 @@
+<!-- Config file for the game -->
+
+<config>
+  <some_data variabel ="1"/>
+</config>

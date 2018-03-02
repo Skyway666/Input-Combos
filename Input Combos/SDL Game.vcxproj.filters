@@ -34,6 +34,9 @@
     <ClCompile Include="Module_Audio_1.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="PugiXml\src\pugixml.cpp">
+      <Filter>PugiXML</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h">
@@ -81,16 +84,22 @@
     <ClInclude Include="ModuleAudio_1.h">
       <Filter>Modules</Filter>
     </ClInclude>
+    <ClInclude Include="PugiXml\src\pugiconfig.hpp">
+      <Filter>PugiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="PugiXml\src\pugixml.hpp">
+      <Filter>PugiXML</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Enemies">
-      <UniqueIdentifier>{41f2f8aa-d5b1-4ab2-8daa-6bad2cef796c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Modules">
       <UniqueIdentifier>{230fb86d-44ab-4361-8912-146a727c886e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Other things">
       <UniqueIdentifier>{4e63ed46-0e2f-4403-8c63-93342ef30945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PugiXML">
+      <UniqueIdentifier>{c4ed505e-7939-400a-baac-e83b4a4ea9b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
