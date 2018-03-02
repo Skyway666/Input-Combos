@@ -84,11 +84,17 @@ update_status ModulePlayer::Update()
 	}
 
 
-	if (App->input->keyboard[SDL_SCANCODE_SPACE] == KEY_DOWN)
+	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
 	{
  		Push_into_buffer(PUNCH);
 		button_pressed = true;
 	}
+	if (App->input->keyboard[SDL_SCANCODE_S] == KEY_DOWN)
+	{
+		Push_into_buffer(KICK);
+		button_pressed = true;
+	}
+
 	//We need to move the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
 	if(!button_pressed)
 	{
@@ -146,6 +152,14 @@ update_status ModulePlayer::Update()
 					wanted_state = STANDING_PUNCHING;
 				break;
 			}
+			case KICK:
+			{
+				if (current_state == CROUCHING)
+					wanted_state = CROUCHING_KICKING;
+				else
+					wanted_state = STANDING_KICKING;
+				break;
+			}
 		}
 	}
 
@@ -168,6 +182,8 @@ update_status ModulePlayer::Update()
 				Hadowken.Reset();
 				Crouching_punch.Reset();
 				Tatsumaki.Reset();
+				Standing_kick.Reset();
+				Crouching_kick.Reset();
 			}
 		}
 
@@ -207,6 +223,16 @@ update_status ModulePlayer::Update()
 			case CROUCHING_PUNCHING:
 			{
 				current_animation = &Crouching_punch;
+				break;
+			}
+			case STANDING_KICKING:
+			{
+				current_animation = &Standing_kick;
+				break;
+			}
+			case CROUCHING_KICKING:
+			{
+				current_animation = &Crouching_kick;
 				break;
 			}
 			case HADOWKEN:
@@ -290,7 +316,7 @@ bool ModulePlayer::Check_for_tatsumaki()
 		{
 			counter++;
 		}
-		if (input_buffer[i] == PUNCH && counter == 2)
+		if (input_buffer[i] == KICK && counter == 2)
 		{
 			counter++;
 		}
@@ -364,6 +390,25 @@ void ModulePlayer::SetAnimations()
 
 	Standing_punch.loop = false;
 	Standing_punch.speed = 0.2;
+
+
+	Standing_kick.PushBack({ 130 * 5,123 * 3,130,123 });
+	Standing_kick.PushBack({ 130 * 6,123  *3,130,123 });
+	Standing_kick.PushBack({ 130 * 7,123 * 3,130,123 });
+	Standing_kick.PushBack({ 130 * 8,123 * 3,130,123 });
+	Standing_kick.PushBack({ 130 * 9,123 * 3,130,123 });
+
+	Standing_kick.loop = false;
+	Standing_kick.speed = 0.2;
+
+	Crouching_kick.PushBack({ 130 * 10,123 * 3 ,130,123 });
+	Crouching_kick.PushBack({ 130 * 11,123 * 3,130,123 });
+	Crouching_kick.PushBack({ 0       ,123 * 4,130,123 });
+	Crouching_kick.PushBack({ 130     ,123 * 4,130,123 });
+	Crouching_kick.PushBack({ 130  * 2,123 * 4,130,123 });
+
+	Crouching_kick.loop = false;
+	Crouching_kick.speed = 0.2;
 
 	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
 	Hadowken.PushBack({ 130 * 11,123  ,130,123 });

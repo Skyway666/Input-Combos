@@ -10,7 +10,7 @@
 
 struct SDL_Texture;
 
-#define MAX_INPUT_BUFFER 15
+#define MAX_INPUT_BUFFER 7
 enum input
 {
 	NONE,
@@ -19,6 +19,7 @@ enum input
 	RIGHT,
 	LEFT,
 	PUNCH,
+	KICK,
 };
 
 enum character_state
@@ -30,6 +31,8 @@ enum character_state
 	JUMPING,
 	STANDING_PUNCHING,
 	CROUCHING_PUNCHING,
+	STANDING_KICKING,
+	CROUCHING_KICKING,
 	HADOWKEN,
 	TATSUMAKI,
 };
@@ -55,6 +58,8 @@ private:
 	Animation Crouch;
 	Animation Standing_punch;
 	Animation Crouching_punch;
+	Animation Standing_kick;
+	Animation Crouching_kick;
 	Animation Walk_forward;
 	Animation Walk_back;
 	Animation Jump;
