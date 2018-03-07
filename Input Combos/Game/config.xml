@@ -11,7 +11,30 @@
       <input value ="down"/>
       <input value ="left"/>
       <input value ="kick"/>
-      <input value ="kick"/>
     </tatsumaki>
   </directional_inputs>
+  <cancel_values>
+    <standing_punch>
+      <attack value ="crouching_punch"/>
+      <attack value ="standing_kick"/>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </standing_punch>
+    <crouching_punch>
+      <attack value ="standing_kick"/>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </crouching_punch>
+    <standing_kick>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </standing_kick>
+    <crouching_kick>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </crouching_kick>
+  </cancel_values>
 </config>

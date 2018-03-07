@@ -169,7 +169,7 @@ update_status ModulePlayer::Update()
 	// animation depending on the current state. 
 	// (TODO 4)
 	if (wanted_state != current_state) {
-		if (Cancelable_current_state())
+		if (Cancelable_current_state()) 
 		{
 			current_state = wanted_state;
 		}
@@ -447,67 +447,31 @@ void ModulePlayer:: SetConfigData()
 
 	config = LoadConfig(config_file);
 
-	pugi::xml_node hadowken = config.child("directional_inputs").child("hadowken");
+	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
 
-	pugi::xml_node iterator = hadowken.first_child();
-	while (iterator != nullptr)
-	{
-		std::string input_name = iterator.attribute("value").as_string();
+	pugi::xml_node iterator = attack.first_child();
+	FillInputListFromXMLIterator(hadowken_inputs, iterator);
 
-		if (input_name == "right")
-		{
-			hadowken_inputs.push_back(RIGHT);
-		}
-		if (input_name == "left")
-		{
-			hadowken_inputs.push_back(LEFT);
-		}
-		if (input_name == "down")
-		{
-			hadowken_inputs.push_back(DOWN);
-		}
-		if (input_name == "punch")
-		{
-			hadowken_inputs.push_back(PUNCH);
-		}
-		if (input_name == "kick")
-		{
-			hadowken_inputs.push_back(KICK);
-		}
-		iterator = iterator.next_sibling();
-	}
+	attack = config.child("directional_inputs").child("tatsumaki");
+	iterator = attack.first_child();
+	FillInputListFromXMLIterator(tatsumaki_inputs, iterator);
+	
+	attack = config.child("cancel_values").child("standing_punch");
+	iterator = attack.first_child();
+	FillStateListFromXMLIterator(S_Standing_punch.cancelability, iterator);
 
-	pugi::xml_node tatsumaki = config.child("directional_inputs").child("tatsumaki");
+	attack = config.child("cancel_values").child("crouching_punch");
+	iterator = attack.first_child();
+	FillStateListFromXMLIterator(S_Crouching_punch.cancelability, iterator);
 
-	iterator = tatsumaki.first_child();
-	while (iterator != nullptr)
-	{
-		std::string input_name = iterator.attribute("value").as_string();
+	attack = config.child("cancel_values").child("standing_kick");
+	iterator = attack.first_child();
+	FillStateListFromXMLIterator(S_Standing_kick.cancelability, iterator);
+	
+	attack = config.child("cancel_values").child("crouching_kick");
+	iterator = attack.first_child();
+	FillStateListFromXMLIterator(S_Crouching_kick.cancelability, iterator);
 
-		if (input_name == "right")
-		{
-			tatsumaki_inputs.push_back(RIGHT);
-		}
-		if (input_name == "left")
-		{
-			tatsumaki_inputs.push_back(LEFT);
-		}
-		if (input_name == "down")
-		{
-			tatsumaki_inputs.push_back(DOWN);
-		}
-		if (input_name == "punch")
-		{
-			tatsumaki_inputs.push_back(PUNCH);
-		}
-		if (input_name == "kick")
-		{
-			tatsumaki_inputs.push_back(KICK);
-		}
-		iterator = iterator.next_sibling();
-	}
-
-	int value = 1 + 1;
 
 }
 pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
@@ -524,4 +488,67 @@ pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
 		ret = config_file.child("config");
 
 	return ret;
+}
+void ModulePlayer::FillInputListFromXMLIterator(std::list<input>& list, pugi::xml_node& iterator)
+{
+	while (iterator != nullptr)
+	{
+		std::string input_name = iterator.attribute("value").as_string();
+
+		if (input_name == "right")
+		{
+			list.push_back(RIGHT);
+		}
+		if (input_name == "left")
+		{
+			list.push_back(LEFT);
+		}
+		if (input_name == "down")
+		{
+			list.push_back(DOWN);
+		}
+		if (input_name == "punch")
+		{
+			list.push_back(PUNCH);
+		}
+		if (input_name == "kick")
+		{
+			list.push_back(KICK);
+		}
+		iterator = iterator.next_sibling();
+	}
+}
+void ModulePlayer::FillStateListFromXMLIterator(std::list<character_state_enum>& list, pugi::xml_node& iterator)
+{
+	while (iterator != nullptr)
+	{
+		std::string attack_name = iterator.attribute("value").as_string();
+
+		if (attack_name == "standing_punch")
+		{
+			list.push_back(STANDING_PUNCHING);
+		}
+		if (attack_name == "crouching_punch")
+		{
+			list.push_back(CROUCHING_PUNCHING);
+		}
+		if (attack_name == "standing_kick")
+		{
+			list.push_back(STANDING_KICKING);
+		}
+		if (attack_name == "crouching_kick")
+		{
+			list.push_back(CROUCHING_KICKING);
+		}
+		if (attack_name == "hadowken")
+		{
+			list.push_back(HADOWKEN);
+		}
+		if (attack_name == "tatsumaki")
+		{
+			list.push_back(TATSUMAKI);
+		}
+
+		iterator = iterator.next_sibling();
+	}
 }
