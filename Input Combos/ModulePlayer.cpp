@@ -77,11 +77,7 @@ update_status ModulePlayer::Update()
 		Push_into_buffer(RIGHT);
 		button_pressed = true;
 	}
-	else if (App->input->keyboard[SDL_SCANCODE_UP] == KEY_DOWN)
-	{
-		Push_into_buffer(UP);
-		button_pressed = true;
-	}
+
 
 
 	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
@@ -151,7 +147,7 @@ update_status ModulePlayer::Update()
 			}
 			case PUNCH:
 			{
-				if (current_state == CROUCHING)
+				if (Has_buffer(DOWN, 3))
 					wanted_state = CROUCHING_PUNCHING;
 				else
 					wanted_state = STANDING_PUNCHING;
@@ -159,7 +155,7 @@ update_status ModulePlayer::Update()
 			}
 			case KICK:
 			{
-				if (current_state == CROUCHING)
+				if (Has_buffer(DOWN, 3))
 					wanted_state = CROUCHING_KICKING;
 				else
 					wanted_state = STANDING_KICKING;
@@ -420,6 +416,18 @@ input ModulePlayer::Catch_first_input_within(int window)
 		}
 	}
 	return NONE;
+}
+
+bool ModulePlayer::Has_buffer(input looking_for, int window)
+{
+	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER; i++)
+	{
+		if (input_buffer[i] == looking_for)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void ModulePlayer::SetAnimations()

@@ -126,6 +126,7 @@ private:
 	//Related to the buffer
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
 	input Catch_first_input_within(int);
+	bool Has_buffer(input, int number_of_frames);
 
 	//Related to cancelling
 	bool Can_cancel_current_state_into(character_state_enum);
