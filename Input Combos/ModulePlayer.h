@@ -11,6 +11,7 @@
 struct SDL_Texture;
 
 #define MAX_INPUT_BUFFER 20
+#define CANCELABILITY_WINDOW 5
 enum input
 {
 	NONE,
@@ -53,9 +54,14 @@ struct character_state
 	{
 		return state == comparison.state;
 	}
-	bool IsCancelable()
+	bool IsCancelableInto(character_state_enum wanted_state)
 	{
-		return cancelability.size() != 0;
+		for (std::list<character_state_enum>::iterator it = cancelability.begin(); it != cancelability.end(); it++)
+		{
+			if (*it == wanted_state)
+			return true;
+		}
+		return false;
 	}
 };
 
@@ -92,8 +98,8 @@ private:
 	Animation Tatsumaki;
 
 	//States
-	//Attacks
-	character_state S_Standing_punch = character_state(STANDING_PUNCHING);
+	//Attacks 
+	character_state S_Standing_punch = character_state(STANDING_PUNCHING); 
 	character_state S_Crouching_punch = character_state(CROUCHING_PUNCHING);
 	character_state S_Standing_kick = character_state(STANDING_KICKING);
 	character_state S_Crouching_kick = character_state(CROUCHING_KICKING);
@@ -112,18 +118,24 @@ private:
 	std::list<input> hadowken_inputs;
 	std::list<input> tatsumaki_inputs;
 
-
+	//Related to special moves
 	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
 	bool Check_for_tatsumaki();			//Checks the input buffer looking for the tatsumaki button combination
-	bool Cancelable_current_state();	//Checks if the character's current state can be cancelled in other states (It should be some sort of mechanism that allows to compare wanted action with current action)
+	bool Current_state_is_movement();	//Checks if the character's current state can be cancelled in other states (It should be some sort of mechanism that allows to compare wanted action with current action)
 
+	//Related to the buffer
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
+	input Catch_first_input_within(int);
+
+	//Related to cancelling
+	bool Can_cancel_current_state_into(character_state_enum);
+
 
 	//Functions for clarity
 	pugi::xml_node LoadConfig(pugi::xml_document& config_file) const;
 	void SetAnimations();
 	void SetConfigData();
-	void FillInputListFromXMLIterator(std::list<input>&, pugi::xml_node&);
+	void FillInputListFromXMLIterator(std::list<input>&, pugi::xml_node&); 
 	void FillStateListFromXMLIterator(std::list<character_state_enum>&, pugi::xml_node&);
 };
 

@@ -115,7 +115,12 @@ update_status ModulePlayer::Update()
 	//depending on the current state, you may want different actions(TODO 3)
 	else
 	{
-		input current_input = input_buffer[MAX_INPUT_BUFFER - 1];
+		input current_input;
+
+		if (Current_state_is_movement())
+			current_input = input_buffer[MAX_INPUT_BUFFER - 1];
+		else
+			current_input = Catch_first_input_within(CANCELABILITY_WINDOW);
 
 		switch (current_input)
 		{
@@ -169,23 +174,31 @@ update_status ModulePlayer::Update()
 	// animation depending on the current state. 
 	// (TODO 4)
 	if (wanted_state != current_state) {
-		if (Cancelable_current_state()) 
+
+		if (Current_state_is_movement())
 		{
 			current_state = wanted_state;
 		}
 		else
-		{
-			if (current_animation->Finished())
+		{ 
+			if (Can_cancel_current_state_into(wanted_state))
 			{
 				current_state = wanted_state;
-				Standing_punch.Reset();
-				Hadowken.Reset();
-				Crouching_punch.Reset();
-				Tatsumaki.Reset();
-				Standing_kick.Reset();
-				Crouching_kick.Reset();
+			}
+			else if (current_animation->Finished())
+			{
+			current_state = wanted_state;
+			Standing_punch.Reset();
+			Hadowken.Reset();
+			Crouching_punch.Reset();
+			Tatsumaki.Reset();
+			Standing_kick.Reset();
+			Crouching_kick.Reset();
 			}
 		}
+
+	
+
 
 		
 		switch (current_state)
@@ -319,6 +332,69 @@ bool ModulePlayer::Check_for_tatsumaki()
 	else
 		return false;
 }
+bool ModulePlayer::Current_state_is_movement()
+{
+	return (current_state == WALKING_BACK || current_state == WALKING_FORWARD || current_state == IDLE || current_state == CROUCHING);
+}
+
+bool ModulePlayer::Can_cancel_current_state_into(character_state_enum wanted_state)
+{
+	bool ret = false;
+	switch (current_state)
+	{
+		case IDLE:
+		{
+			ret = S_Idle.IsCancelableInto(wanted_state);
+			break;
+		}
+		case WALKING_FORWARD:
+		{
+			ret = S_Walk_forward.IsCancelableInto(wanted_state);
+			break;
+		}
+		case WALKING_BACK:
+		{
+			ret = S_Walk_back.IsCancelableInto(wanted_state);
+			break;
+		}
+		case CROUCHING:
+		{
+			ret = S_Crouch.IsCancelableInto(wanted_state);
+			break;
+		}
+		case STANDING_PUNCHING:
+		{
+			ret = S_Standing_punch.IsCancelableInto(wanted_state);
+			break;
+		}
+		case CROUCHING_PUNCHING:
+		{
+			ret = S_Crouching_punch.IsCancelableInto(wanted_state);
+			break;
+		}
+		case STANDING_KICKING:
+		{
+			ret = S_Standing_kick.IsCancelableInto(wanted_state);
+			break;
+		}
+		case CROUCHING_KICKING:
+		{
+			ret = S_Crouching_kick.IsCancelableInto(wanted_state);
+			break;
+		}
+		case HADOWKEN:
+		{
+			ret = S_Hadowken.IsCancelableInto(wanted_state);
+			break;
+		}
+		case TATSUMAKI:
+		{
+			ret = S_Tatsumaki.IsCancelableInto(wanted_state);
+			break;
+		}
+	}
+	return ret;
+}
 
 void ModulePlayer::Push_into_buffer(input input)
 {
@@ -332,12 +408,18 @@ void ModulePlayer::Push_into_buffer(input input)
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
 }
 
-bool ModulePlayer::Cancelable_current_state()
+
+
+input ModulePlayer::Catch_first_input_within(int window)
 {
-	if (current_state == WALKING_FORWARD || current_state == WALKING_BACK || current_state == IDLE || current_state == CROUCHING)
-		return true;
-	else
-		return false;
+	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER; i++)
+	{
+		if (input_buffer[i] != NONE)
+		{
+			return input_buffer[i];
+		}
+	}
+	return NONE;
 }
 
 void ModulePlayer::SetAnimations()
@@ -463,7 +545,7 @@ void ModulePlayer:: SetConfigData()
 	attack = config.child("cancel_values").child("crouching_punch");
 	iterator = attack.first_child();
 	FillStateListFromXMLIterator(S_Crouching_punch.cancelability, iterator);
-
+	
 	attack = config.child("cancel_values").child("standing_kick");
 	iterator = attack.first_child();
 	FillStateListFromXMLIterator(S_Standing_kick.cancelability, iterator);
@@ -552,3 +634,4 @@ void ModulePlayer::FillStateListFromXMLIterator(std::list<character_state_enum>&
 		iterator = iterator.next_sibling();
 	}
 }
+
