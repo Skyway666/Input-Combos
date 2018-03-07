@@ -279,24 +279,20 @@ update_status ModulePlayer::Update()
 bool ModulePlayer::Check_for_hadowken()
 {
 	int counter = 0;
+	auto input_iterator = hadowken_inputs.begin();
+
 	for (int i = 0; (i < MAX_INPUT_BUFFER); i++)
 	{
 
-		if (input_buffer[i] == DOWN && counter == 0)
+		if (input_buffer[i] == *input_iterator)
 		{
 			counter++;
-		}
-		if (input_buffer[i] == RIGHT && counter == 1)
-		{
-			counter++;
-		}
-		if (input_buffer[i] == PUNCH && counter == 2)
-		{
-			counter++;
+			if(counter < hadowken_inputs.size()) //We don't want to access something out of the list
+			input_iterator++;
 		}
 	}
 
-	if (counter == 3)
+	if (counter == hadowken_inputs.size())
 		return true;
 	else
 		return false;
@@ -305,24 +301,20 @@ bool ModulePlayer::Check_for_hadowken()
 bool ModulePlayer::Check_for_tatsumaki()
 {
 	int counter = 0;
+	auto input_iterator = tatsumaki_inputs.begin();
+
 	for (int i = 0; (i < MAX_INPUT_BUFFER); i++)
 	{
 
-		if (input_buffer[i] == DOWN && counter == 0)
+		if (input_buffer[i] == *input_iterator)
 		{
 			counter++;
-		}
-		if (input_buffer[i] == LEFT && counter == 1)
-		{
-			counter++;
-		}
-		if (input_buffer[i] == KICK && counter == 2)
-		{
-			counter++;
+			if (counter < tatsumaki_inputs.size()) //We don't want to access something out of the list
+			input_iterator++;
 		}
 	}
 
-	if (counter == 3)
+	if (counter == tatsumaki_inputs.size())
 		return true;
 	else
 		return false;

@@ -11,6 +11,7 @@
       <input value ="down"/>
       <input value ="left"/>
       <input value ="kick"/>
+      <input value ="kick"/>
     </tatsumaki>
   </directional_inputs>
 </config>
