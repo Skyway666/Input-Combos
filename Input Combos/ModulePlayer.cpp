@@ -62,22 +62,37 @@ update_status ModulePlayer::Update()
 	// Check what inputs are being pressed in this frame, and push them into the input buffer (TODO 1)
 	bool button_pressed = false;
 
-	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_REPEAT)
+	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_DOWN)
 	{
 		Push_into_buffer(DOWN);
 		button_pressed = true;
+		direction_inputs.down = true;
 	}
-	else if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_REPEAT)
+	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_DOWN)
 	{
 		Push_into_buffer(LEFT);
 		button_pressed = true;
+		direction_inputs.left = true;
 	}
-	else if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_REPEAT)
+	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_DOWN)
 	{
 		Push_into_buffer(RIGHT);
 		button_pressed = true;
+		direction_inputs.right = true;
 	}
 
+	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_UP)
+	{
+		direction_inputs.down = false;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_UP)
+	{
+		direction_inputs.left = false;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_UP)
+	{
+		direction_inputs.right = false;
+	}
 
 
 	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
@@ -90,13 +105,36 @@ update_status ModulePlayer::Update()
 		Push_into_buffer(KICK);
 		button_pressed = true;
 	}
-
 	//We need to move the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
 	if(!button_pressed)
 	{
 		Push_into_buffer(NONE); 
 	}
 
+
+
+
+
+	//Manage movement
+	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite any movement
+	if (direction_inputs.down)
+	{
+		wanted_state = CROUCHING;
+	}
+	else if(direction_inputs.left)
+	{
+		wanted_state = WALKING_BACK;
+	}
+	else if (direction_inputs.right)
+	{
+		wanted_state = WALKING_FORWARD;
+	}
+	else
+	{
+		wanted_state = IDLE;
+	}
+
+	//Manage attacks
 	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame (TODO 2)
 	if (Check_for_hadowken())
 	{
@@ -106,7 +144,6 @@ update_status ModulePlayer::Update()
 	{
 		wanted_state = TATSUMAKI;
 	}
-
 	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
 	//depending on the current state, you may want different actions(TODO 3)
 	else
@@ -120,34 +157,9 @@ update_status ModulePlayer::Update()
 
 		switch (current_input)
 		{
-			case NONE:
-			{
-				wanted_state = IDLE;
-				break;
-			}
-			case RIGHT:
-			{
-				wanted_state = WALKING_FORWARD;
-				break;
-			}
-			case LEFT:
-			{
-				wanted_state = WALKING_BACK;
-				break;
-			}
-			case DOWN:
-			{
-				wanted_state = CROUCHING;
-				break;
-			}
-			case UP:
-			{
-				wanted_state = JUMPING;
-				break;
-			}
 			case PUNCH:
 			{
-				if (Has_buffer(DOWN, 3))
+				if (direction_inputs.down)
 					wanted_state = CROUCHING_PUNCHING;
 				else
 					wanted_state = STANDING_PUNCHING;
@@ -155,7 +167,7 @@ update_status ModulePlayer::Update()
 			}
 			case KICK:
 			{
-				if (Has_buffer(DOWN, 3))
+				if (direction_inputs.down)
 					wanted_state = CROUCHING_KICKING;
 				else
 					wanted_state = STANDING_KICKING;
@@ -177,7 +189,7 @@ update_status ModulePlayer::Update()
 		}
 		else
 		{ 
-			if (Can_cancel_current_state_into(wanted_state))
+			if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
 			{
 				current_state = wanted_state;
 			}
@@ -219,11 +231,6 @@ update_status ModulePlayer::Update()
 				current_animation = &Crouch;
 				break;
 			}
-			case JUMPING:
-			{
-				current_animation = &Jump;
-				break;
-			}
 			case STANDING_PUNCHING:
 			{
 				current_animation = &Standing_punch;
@@ -263,20 +270,41 @@ update_status ModulePlayer::Update()
 	{
 		case WALKING_FORWARD:
 		{
-			pos.x += 5;
+			pos.x += 5 * SPEED;
 			break;
 		}
 		case WALKING_BACK:
 		{
-			pos.x -= 5;
+			pos.x -= 5 * SPEED;
 			break;
 		}
 		case TATSUMAKI:
 		{
-			pos.x += 7;
+			pos.x += 7 * SPEED;
 			break;
 		}
 	}
+
+	//Debug
+	switch (current_animation->GetState())
+	{
+	case STARTUP:
+	{
+		App->render->DrawQuad({ 0,0,200,200 }, 0, 255, 0, 255, 0);
+		break;
+	}
+	case ACTIVE:
+	{
+		App->render->DrawQuad({ 0,0,200,200 }, 0, 0, 255, 255, 0);
+		break;
+	}
+	case RECOVERY:
+	{
+		App->render->DrawQuad({ 0,0,200,200 }, 255, 0, 0, 255, 0);
+		break;
+	}
+	}
+
 
 	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 130*4, 123*4);
 
@@ -438,7 +466,7 @@ void ModulePlayer::SetAnimations()
 	Idle.PushBack({ 130 * 3,0,130,123 });
 
 	Idle.loop = true;
-	Idle.speed = 0.2;
+	Idle.speed = 0.1 * SPEED;
 
 	Walk_forward.PushBack({ 130 * 4,0,130,123 });
 	Walk_forward.PushBack({ 130 * 5,0,130,123 });
@@ -447,7 +475,7 @@ void ModulePlayer::SetAnimations()
 	Walk_forward.PushBack({ 130 * 8,0,130,123 });
 
 	Walk_forward.loop = true;
-	Walk_forward.speed = 0.2;
+	Walk_forward.speed = 0.1 * SPEED;
 
 	Walk_back.PushBack({ 130 * 8,0,130,123 });
 	Walk_back.PushBack({ 130 * 7,0,130,123 });
@@ -456,41 +484,50 @@ void ModulePlayer::SetAnimations()
 	Walk_back.PushBack({ 130 * 4,0,130,123 });
 
 	Walk_back.loop = true;
-	Walk_back.speed = 0.2;
+	Walk_back.speed = 0.1 * SPEED;
 
 	Crouch.PushBack({ 130 * 3,123,130,123 });
 	Crouch.PushBack({ 130 * 4,123,130,123 });
 
 	Crouch.loop = false;
-	Crouch.speed = 0.2;
+	Crouch.speed = 0.1 * SPEED;
 
 	Standing_punch.PushBack({ 130 * 5,123,130,123 });
 	Standing_punch.PushBack({ 130 * 6,123,130,123 });
 	Standing_punch.PushBack({ 130 * 7,123,130,123 });
-	Standing_punch.PushBack({ 130 * 8,123,130,123 });
-	Standing_punch.PushBack({ 130 * 9,123,130,123 });
+	Standing_punch.PushBack({ 130 * 8,123,130,123 }, ACTIVE);
+	Standing_punch.PushBack({ 130 * 9,123,130,123 }, RECOVERY);
 
 	Standing_punch.loop = false;
-	Standing_punch.speed = 0.2;
+	Standing_punch.speed = 0.1 * SPEED;
 
 
 	Standing_kick.PushBack({ 130 * 5,123 * 3,130,123 });
 	Standing_kick.PushBack({ 130 * 6,123  *3,130,123 });
 	Standing_kick.PushBack({ 130 * 7,123 * 3,130,123 });
-	Standing_kick.PushBack({ 130 * 8,123 * 3,130,123 });
-	Standing_kick.PushBack({ 130 * 9,123 * 3,130,123 });
+	Standing_kick.PushBack({ 130 * 8,123 * 3,130,123 }, ACTIVE);
+	Standing_kick.PushBack({ 130 * 9,123 * 3,130,123 }, RECOVERY);
 
 	Standing_kick.loop = false;
-	Standing_kick.speed = 0.2;
+	Standing_kick.speed = 0.1 * SPEED;
 
 	Crouching_kick.PushBack({ 130 * 10,123 * 3 ,130,123 });
 	Crouching_kick.PushBack({ 130 * 11,123 * 3,130,123 });
 	Crouching_kick.PushBack({ 0       ,123 * 4,130,123 });
-	Crouching_kick.PushBack({ 130     ,123 * 4,130,123 });
-	Crouching_kick.PushBack({ 130  * 2,123 * 4,130,123 });
+	Crouching_kick.PushBack({ 130     ,123 * 4,130,123 }, ACTIVE);
+	Crouching_kick.PushBack({ 130  * 2,123 * 4,130,123 }, RECOVERY);
 
 	Crouching_kick.loop = false;
-	Crouching_kick.speed = 0.2;
+	Crouching_kick.speed = 0.1 * SPEED;
+
+	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
+	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 }, ACTIVE);
+	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 }, RECOVERY);
+
+	Crouching_punch.loop = false;
+	Crouching_punch.speed = 0.1 * SPEED;
 
 	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
 	Hadowken.PushBack({ 130 * 11,123  ,130,123 });
@@ -499,17 +536,7 @@ void ModulePlayer::SetAnimations()
 	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
 
 	Hadowken.loop = false;
-	Hadowken.speed = 0.2;
-
-
-	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 });
-	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 });
-
-	Crouching_punch.loop = false;
-	Crouching_punch.speed = 0.2;
+	Hadowken.speed = 0.1 * SPEED;
 
 	Tatsumaki.PushBack({ 130 * 8 ,123 * 2,130,123 });
 	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
@@ -527,7 +554,7 @@ void ModulePlayer::SetAnimations()
 	Tatsumaki.PushBack({ 130 * 4 ,123 * 3,130,123 });
 
 	Tatsumaki.loop = false;
-	Tatsumaki.speed = 0.2;
+	Tatsumaki.speed = 0.1 * SPEED;
 }
 
 void ModulePlayer:: SetConfigData()

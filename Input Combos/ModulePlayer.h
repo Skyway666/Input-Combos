@@ -10,8 +10,10 @@
 
 struct SDL_Texture;
 
-#define MAX_INPUT_BUFFER 20
-#define CANCELABILITY_WINDOW 5
+#define MAX_INPUT_BUFFER 50
+#define CANCELABILITY_WINDOW 20
+#define SPEED 1
+
 enum input
 {
 	NONE,
@@ -36,6 +38,11 @@ enum character_state_enum
 	CROUCHING_KICKING,
 	HADOWKEN,
 	TATSUMAKI,
+};
+
+struct directions
+{
+	bool left, down, right = false;
 };
 
 struct character_state
@@ -83,6 +90,7 @@ private:
 	//State machine
 	character_state_enum current_state;
 	character_state_enum wanted_state;
+	directions direction_inputs;
 
 	//Animations
 	Animation Idle;
@@ -128,7 +136,7 @@ private:
 	input Catch_first_input_within(int);
 	bool Has_buffer(input, int number_of_frames);
 
-	//Related to cancelling
+	//Related to canceling
 	bool Can_cancel_current_state_into(character_state_enum);
 
 
