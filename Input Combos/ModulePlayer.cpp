@@ -140,7 +140,7 @@ update_status ModulePlayer::Update()
 	{
 		wanted_state = SUPER_HADOWKEN;
 	}
-	if (Check_for_tatsumaki())
+	else if (Check_for_tatsumaki())
 	{
 		wanted_state = TATSUMAKI;
 	}
@@ -743,6 +743,10 @@ void ModulePlayer::FillStateListFromXMLIterator(std::list<character_state_enum>&
 		if (attack_name == "tatsumaki")
 		{
 			list.push_back(TATSUMAKI);
+		}
+		if (attack_name == "super_hadowken")
+		{
+			list.push_back(SUPER_HADOWKEN);
 		}
 
 		iterator = iterator.next_sibling();

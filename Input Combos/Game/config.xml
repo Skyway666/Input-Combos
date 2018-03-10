@@ -59,6 +59,7 @@
     <crouching_kick>
       <attack value ="hadowken"/>
       <attack value ="tatsumaki"/>
+      <attack value ="super_hadowken"/>
     </crouching_kick>
   </cancel_values>
   
