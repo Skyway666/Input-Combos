@@ -59,8 +59,7 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
-
-
+	//Read movement inputs
 	// Check what directions are being pressed tis frame and which are being released. Update directional bools
 	bool button_pressed = false;
 
@@ -115,6 +114,7 @@ update_status ModulePlayer::Update()
 		wanted_state = IDLE;
 	}
 
+	//Read attack inputs
 	//Check attack inputs and push them into the buffer
 	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
 	{
@@ -126,23 +126,33 @@ update_status ModulePlayer::Update()
 		Push_into_buffer(KICK);
 		button_pressed = true;
 	}
+
 	//We need to move the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
 	if(!button_pressed)
 	{
 		Push_into_buffer(NONE); 
 	}
 
-
 	//Manage attacks
 	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame (TODO 2)
-	if (Check_for_hadowken())
-	{
-		wanted_state = HADOWKEN;
-	}
-	else if (Check_for_tatsumaki())
+	
+	//if (Check_for_super_hadowken())
+	//{
+	//	wanted_state = SUPER_HADOWKEN;
+	//}
+	if (Check_for_tatsumaki())
 	{
 		wanted_state = TATSUMAKI;
 	}
+	else if (Check_for_hadowken())
+	{
+		wanted_state = HADOWKEN;
+	}
+	
+	
+	
+
+
 	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
 	//depending on the current state, you may want different actions(TODO 3)
 	else
@@ -150,6 +160,7 @@ update_status ModulePlayer::Update()
 		input current_input;
 
 		if (Current_state_is_movement())
+		/*	current_input = input_buffer[MAX_INPUT_BUFFER - 1 - hadowken_detection_delay];*/
 			current_input = input_buffer[MAX_INPUT_BUFFER - 1];
 		else
 			current_input = Catch_first_attack_input_within(normal_moves_cancelability_window);
@@ -181,87 +192,29 @@ update_status ModulePlayer::Update()
 	// animation is finished, the current state goes back to the wanted state in this frame, and the animation which was being done is reset. After that, we update the 
 	// animation depending on the current state. 
 	// (TODO 4)
-	if (wanted_state != current_state) {
 
-		if (Current_state_is_movement())
+	if (Current_state_is_movement())
+	{
+		current_state = wanted_state;
+		Update_animation_depending_on_current_state();
+	}
+	else
+	{ 
+		if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
 		{
 			current_state = wanted_state;
+			Update_animation_depending_on_current_state();
 		}
-		else
-		{ 
-			if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
-			{
-				current_state = wanted_state;
-			}
-			else if (current_animation->Finished())
-			{
-			current_state = wanted_state;
-			Standing_punch.Reset();
-			Hadowken.Reset();
-			Crouching_punch.Reset();
-			Tatsumaki.Reset();
-			Standing_kick.Reset();
-			Crouching_kick.Reset();
-			}
-		}
-
-	
-
-
-		
-		switch (current_state)
+		else if (current_animation->Finished())
 		{
-			case IDLE:
-			{
-				current_animation = &Idle;
-				break;
-			}
-			case WALKING_FORWARD:
-			{
-				current_animation = &Walk_forward;
-				break;
-			}
-			case WALKING_BACK:
-			{
-				current_animation = &Walk_back;
-				break;
-			}
-			case CROUCHING:
-			{
-				current_animation = &Crouch;
-				break;
-			}
-			case STANDING_PUNCHING:
-			{
-				current_animation = &Standing_punch;
-				break;
-			}
-			case CROUCHING_PUNCHING:
-			{
-				current_animation = &Crouching_punch;
-				break;
-			}
-			case STANDING_KICKING:
-			{
-				current_animation = &Standing_kick;
-				break;
-			}
-			case CROUCHING_KICKING:
-			{
-				current_animation = &Crouching_kick;
-				break;
-			}
-			case HADOWKEN:
-			{
-				current_animation = &Hadowken;
-				break;
-			}
-			case TATSUMAKI:
-			{
-				current_animation = &Tatsumaki;
-				break;
-			}
-
+		current_state = IDLE;
+		Standing_punch.Reset();
+		Hadowken.Reset();
+		Crouching_punch.Reset();
+		Tatsumaki.Reset();
+		Standing_kick.Reset();
+		Crouching_kick.Reset();
+		Update_animation_depending_on_current_state();
 		}
 	}
 
@@ -316,6 +269,7 @@ update_status ModulePlayer::Update()
 bool ModulePlayer::Check_for_hadowken()
 {
 	int counter = 0;
+	int last_detection = 0;
 	auto input_iterator = hadowken_inputs.begin();
 
 	for (int i = MAX_INPUT_BUFFER - 1 - hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
@@ -324,12 +278,13 @@ bool ModulePlayer::Check_for_hadowken()
 		if (input_buffer[i] == *input_iterator)
 		{
 			counter++;
+			last_detection = i;
 			if(counter < hadowken_inputs.size()) //We don't want to access something out of the list
 			input_iterator++;
 		}
 	}
 
-	if (counter == hadowken_inputs.size())
+	if (counter == hadowken_inputs.size() && last_detection <= MAX_INPUT_BUFFER - 1 - hadowken_detection_delay)
 		return true;
 	else
 		return false;
@@ -352,6 +307,35 @@ bool ModulePlayer::Check_for_tatsumaki()
 	}
 
 	if (counter == tatsumaki_inputs.size())
+		return true;
+	else
+		return false;
+}
+
+bool ModulePlayer::Check_for_super_hadowken()
+{
+	int counter = 0;
+	auto direction_input_iterator = super_hadowken_directions.begin();
+
+	
+	for (int i = MAX_INPUT_BUFFER - 1 - super_hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
+	{
+		//First detect directions, in which order is important
+		if (input_buffer[i] == *direction_input_iterator)
+		{
+			counter++;
+			if (counter < super_hadowken_directions.size()) //We don't want to access something out of the list
+				direction_input_iterator++;
+		}
+		//Now detect attacks, in which order is irrelevant
+		if (counter >= 2)
+		{
+			auto findIter = std::find(super_hadowken_simultaneous_attacks.begin(), super_hadowken_simultaneous_attacks.end(), input_buffer[i]);
+
+		}
+	}
+
+	if (counter == super_hadowken_directions.size())
 		return true;
 	else
 		return false;
@@ -560,6 +544,70 @@ void ModulePlayer::SetAnimations()
 	Tatsumaki.speed = 0.1 * speed;
 }
 
+void ModulePlayer::Update_animation_depending_on_current_state()
+{
+	switch (current_state)
+	{
+		case IDLE:
+		{
+			current_animation = &Idle;
+			break;
+		}
+		case WALKING_FORWARD:
+		{
+			current_animation = &Walk_forward;
+			break;
+		}
+		case WALKING_BACK:
+		{
+			current_animation = &Walk_back;
+			break;
+		}
+		case CROUCHING:
+		{
+			current_animation = &Crouch;
+			break;
+		}
+		case STANDING_PUNCHING:
+		{
+			current_animation = &Standing_punch;
+			break;
+		}
+		case CROUCHING_PUNCHING:
+		{
+			current_animation = &Crouching_punch;
+			break;
+		}
+		case STANDING_KICKING:
+		{
+			current_animation = &Standing_kick;
+			break;
+		}
+		case CROUCHING_KICKING:
+		{
+			current_animation = &Crouching_kick;
+			break;
+		}
+		case HADOWKEN:
+		{
+			current_animation = &Hadowken;
+			break;
+		}
+		case SUPER_HADOWKEN:
+		{
+			current_animation = &Hadowken;
+			hadowken = Particle(iPoint(pos.x + 200, pos.y + 200), iPoint(10 * speed, 0), 1000);
+			App->particles->AddParticle(hadowken);
+			break;
+		}
+		case TATSUMAKI:
+		{
+			current_animation = &Tatsumaki;
+			break;
+		}
+	}
+}
+
 void ModulePlayer:: SetConfigData()
 {
 	pugi::xml_document	config_file;
@@ -570,8 +618,11 @@ void ModulePlayer:: SetConfigData()
 	speed = config.child("speed").child("game_speed").attribute("value").as_double();
 
 	hadowken_cancelability_window = config.child("cancelability_windows").child("hadowken").attribute("value").as_int();
+	super_hadowken_cancelability_window = config.child("cancelability_windows").child("super_hadowken").attribute("value").as_int();
 	tatsumaki_cancelability_window = config.child("cancelability_windows").child("tatsumaki").attribute("value").as_int();
 	normal_moves_cancelability_window = config.child("cancelability_windows").child("normal_moves").attribute("value").as_int();
+
+	hadowken_detection_delay = config.child("detection_delay").child("hadowken").attribute("value").as_int();
 
 	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
 	pugi::xml_node iterator = attack.first_child();
@@ -580,6 +631,12 @@ void ModulePlayer:: SetConfigData()
 	attack = config.child("directional_inputs").child("tatsumaki");
 	iterator = attack.first_child();
 	FillInputListFromXMLIterator(tatsumaki_inputs, iterator);
+
+	attack = config.child("directional_inputs").child("super_hadowken");
+	iterator = attack.first_child();
+	FillInputListFromXMLIterator(super_hadowken_directions, iterator);
+	iterator = attack.child("simultaneous").first_child();
+	FillInputListFromXMLIterator(super_hadowken_simultaneous_attacks, iterator);
 	
 	attack = config.child("cancel_values").child("standing_punch");
 	iterator = attack.first_child();

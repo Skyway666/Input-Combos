@@ -6,8 +6,9 @@
   </speed>
   
   <cancelability_windows>
-    <hadowken value ="30"/>
-    <tatsumaki value ="30"/>
+    <hadowken value ="20"/>
+    <tatsumaki value ="20"/>
+    <super_hadowken value ="20"/>
     <normal_moves value ="10"/>
   </cancelability_windows>
   
@@ -22,7 +23,19 @@
       <input value ="left"/>
       <input value ="kick"/>
     </tatsumaki>
+    <super_hadowken>
+      <input value ="down"/>
+      <input value ="right"/>
+      <simultaneous>
+        <input value ="punch"/>
+        <input value ="kick"/>
+      </simultaneous>
+    </super_hadowken>
   </directional_inputs>
+
+  <detection_delay>
+    <hadowken value ="3"/>
+  </detection_delay>
   
   <cancel_values>
     <standing_punch>

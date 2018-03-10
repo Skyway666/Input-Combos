@@ -20,7 +20,7 @@ ModuleParticles::~ModuleParticles()
 // Load assets
 bool ModuleParticles::Init()
 {
-	//graphics = App->textures->Load("Assets/Hadowken.png");
+	graphics = App->textures->Load("Assets/hadowken.png");
 	return true;
 }
 
@@ -34,7 +34,6 @@ bool ModuleParticles::CleanUp()
 // Update: draw background
 update_status ModuleParticles::Update()
 {
-	
 	for (uint i = 0; i < MAX_ACTIVE_PARTICLES; ++i)
 	{
 		Particle* p = active[i];
@@ -50,7 +49,7 @@ update_status ModuleParticles::Update()
 		}
 		else 
 		{
-				App->render->Blit(graphics, p->position.x, p->position.y, &(p->anim.GetCurrentFrame()));
+				App->render->Blit(graphics, p->position.x, p->position.y,nullptr, 170, 170);
 		}
 	}
 
@@ -60,23 +59,13 @@ update_status ModuleParticles::Update()
 
 
 
-void ModuleParticles::AddParticle(const Particle& particle, int x, int y,int speed_x, int speed_y)
+void ModuleParticles::AddParticle(const Particle& particle)
 {
 	for (uint i = 0; i < MAX_ACTIVE_PARTICLES; ++i)
 	{
 		if (active[i] == nullptr)
 		{
 			Particle* p = new Particle(particle);
-			p->position.x = x;
-			p->position.y = y;
-			if (speed_x != 0)
-			{
-				p->speed.x = speed_x;
-			}
-			if (speed_y != 0)
-			{
-				p->speed.y = speed_y;
-			}
 			active[i] = p;
 			break;
 		}
@@ -100,11 +89,9 @@ bool Particle::Update()
 		{
 			ret = false;
 		}
-
 	}
-	else
-		if (anim.Finished())
-			ret = false;
+
+	position += speed;
 
 	return ret;
 }

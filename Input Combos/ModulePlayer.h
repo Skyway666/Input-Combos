@@ -4,6 +4,7 @@
 #include "Module.h"
 #include "Animation.h"
 #include "p2Point.h"
+#include "ModuleParticles.h"
 #include <list>
 #include <string>
 #include "PugiXml/src/pugixml.hpp"
@@ -20,7 +21,7 @@ enum input
 	RIGHT,
 	LEFT,
 	PUNCH,
-	KICK,
+	KICK
 };
 
 enum character_state_enum
@@ -35,7 +36,8 @@ enum character_state_enum
 	STANDING_KICKING,
 	CROUCHING_KICKING,
 	HADOWKEN,
-	TATSUMAKI,
+	SUPER_HADOWKEN,
+	TATSUMAKI
 };
 
 struct directions
@@ -118,16 +120,23 @@ private:
 	character_state S_Crouch = character_state(CROUCHING, true);
 	character_state S_Idle = character_state(IDLE, true);
 
+	//Particles
+	Particle hadowken;
+
 	//Input buffer
 	input input_buffer[MAX_INPUT_BUFFER];
 
 	//Directional inputs 
 	std::list<input> hadowken_inputs;
 	std::list<input> tatsumaki_inputs;
+	std::list<input> super_hadowken_directions;
+	std::list<input> super_hadowken_simultaneous_attacks;
+	int hadowken_detection_delay;
 
 	//Related to special moves
 	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
 	bool Check_for_tatsumaki();			//Checks the input buffer looking for the tatsumaki button combination
+	bool Check_for_super_hadowken();	//Checks the input buffer looking for the super hadowken button combination
 	bool Current_state_is_movement();	//Checks if the character's current state can be cancelled in other states (It should be some sort of mechanism that allows to compare wanted action with current action)
 
 	//Related to the buffer
@@ -140,6 +149,7 @@ private:
 	bool Can_cancel_current_state_into(character_state_enum);
 	int hadowken_cancelability_window;
 	int tatsumaki_cancelability_window;
+	int super_hadowken_cancelability_window;
 	int normal_moves_cancelability_window;
 
 
@@ -150,6 +160,7 @@ private:
 	void FillInputListFromXMLIterator(std::list<input>&, pugi::xml_node&); 
 	void FillStateListFromXMLIterator(std::list<character_state_enum>&, pugi::xml_node&);
 	bool Is_direction_input(input);
+	void Update_animation_depending_on_current_state();
 };
 
 #endif
