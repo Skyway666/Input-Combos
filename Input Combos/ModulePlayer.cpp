@@ -28,14 +28,16 @@ bool ModulePlayer::Init()
 	for (int i = 0; i < MAX_INPUT_BUFFER; i++)
 	{
 		input_buffer[i] = NONE;
-	}
+	}	
+	
+	//Set config data
+	SetConfigData();
 	//Ser animations
 	SetAnimations();
 	//Set ryu's initial position
 	pos.x = 425;
 	pos.y = 300;
-	//Set config data
-	SetConfigData();
+
 	
 	
 	
@@ -59,24 +61,21 @@ update_status ModulePlayer::Update()
 {
 
 
-	// Check what inputs are being pressed in this frame, and push them into the input buffer (TODO 1)
+	// Check what directions are being pressed tis frame and which are being released. Update directional bools
 	bool button_pressed = false;
 
 	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_DOWN)
 	{
-		Push_into_buffer(DOWN);
 		button_pressed = true;
 		direction_inputs.down = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_DOWN)
 	{
-		Push_into_buffer(LEFT);
 		button_pressed = true;
 		direction_inputs.left = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_DOWN)
 	{
-		Push_into_buffer(RIGHT);
 		button_pressed = true;
 		direction_inputs.right = true;
 	}
@@ -94,7 +93,29 @@ update_status ModulePlayer::Update()
 		direction_inputs.right = false;
 	}
 
+	//Manage movement
+	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite it. Also push input into the buffer, as movement input should be continuous
+	if (direction_inputs.down)
+	{
+		Push_into_buffer(DOWN);
+		wanted_state = CROUCHING;
+	}
+	else if (direction_inputs.left)
+	{
+		Push_into_buffer(LEFT);
+		wanted_state = WALKING_BACK;
+	}
+	else if (direction_inputs.right)
+	{
+		Push_into_buffer(RIGHT);
+		wanted_state = WALKING_FORWARD;
+	}
+	else
+	{
+		wanted_state = IDLE;
+	}
 
+	//Check attack inputs and push them into the buffer
 	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
 	{
  		Push_into_buffer(PUNCH);
@@ -111,28 +132,6 @@ update_status ModulePlayer::Update()
 		Push_into_buffer(NONE); 
 	}
 
-
-
-
-
-	//Manage movement
-	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite any movement
-	if (direction_inputs.down)
-	{
-		wanted_state = CROUCHING;
-	}
-	else if(direction_inputs.left)
-	{
-		wanted_state = WALKING_BACK;
-	}
-	else if (direction_inputs.right)
-	{
-		wanted_state = WALKING_FORWARD;
-	}
-	else
-	{
-		wanted_state = IDLE;
-	}
 
 	//Manage attacks
 	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame (TODO 2)
@@ -153,7 +152,8 @@ update_status ModulePlayer::Update()
 		if (Current_state_is_movement())
 			current_input = input_buffer[MAX_INPUT_BUFFER - 1];
 		else
-			current_input = Catch_first_input_within(CANCELABILITY_WINDOW);
+			current_input = Catch_first_attack_input_within(normal_moves_cancelability_window);
+
 
 		switch (current_input)
 		{
@@ -270,17 +270,17 @@ update_status ModulePlayer::Update()
 	{
 		case WALKING_FORWARD:
 		{
-			pos.x += 5 * SPEED;
+			pos.x += 5 * speed;
 			break;
 		}
 		case WALKING_BACK:
 		{
-			pos.x -= 5 * SPEED;
+			pos.x -= 5 * speed;
 			break;
 		}
 		case TATSUMAKI:
 		{
-			pos.x += 7 * SPEED;
+			pos.x += 7 * speed;
 			break;
 		}
 	}
@@ -295,12 +295,12 @@ update_status ModulePlayer::Update()
 	}
 	case ACTIVE:
 	{
-		App->render->DrawQuad({ 0,0,200,200 }, 0, 0, 255, 255, 0);
+		App->render->DrawQuad({ 200,0,200,200 }, 0, 0, 255, 255, 0);
 		break;
 	}
 	case RECOVERY:
 	{
-		App->render->DrawQuad({ 0,0,200,200 }, 255, 0, 0, 255, 0);
+		App->render->DrawQuad({ 400,0,200,200 }, 255, 0, 0, 255, 0);
 		break;
 	}
 	}
@@ -318,7 +318,7 @@ bool ModulePlayer::Check_for_hadowken()
 	int counter = 0;
 	auto input_iterator = hadowken_inputs.begin();
 
-	for (int i = 0; (i < MAX_INPUT_BUFFER); i++)
+	for (int i = MAX_INPUT_BUFFER - 1 - hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
 	{
 
 		if (input_buffer[i] == *input_iterator)
@@ -340,7 +340,7 @@ bool ModulePlayer::Check_for_tatsumaki()
 	int counter = 0;
 	auto input_iterator = tatsumaki_inputs.begin();
 
-	for (int i = 0; (i < MAX_INPUT_BUFFER); i++)
+	for (int i = MAX_INPUT_BUFFER - 1 - tatsumaki_cancelability_window; i < MAX_INPUT_BUFFER; i++)
 	{
 
 		if (input_buffer[i] == *input_iterator)
@@ -432,13 +432,16 @@ void ModulePlayer::Push_into_buffer(input input)
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
 }
 
+bool Is_attack_input(input input)
+{
+	return (input == PUNCH || input == KICK);
+}
 
-
-input ModulePlayer::Catch_first_input_within(int window)
+input ModulePlayer::Catch_first_attack_input_within(int window)
 {
 	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER; i++)
 	{
-		if (input_buffer[i] != NONE)
+		if (Is_attack_input(input_buffer[i]))
 		{
 			return input_buffer[i];
 		}
@@ -466,7 +469,7 @@ void ModulePlayer::SetAnimations()
 	Idle.PushBack({ 130 * 3,0,130,123 });
 
 	Idle.loop = true;
-	Idle.speed = 0.1 * SPEED;
+	Idle.speed = 0.1 * speed;
 
 	Walk_forward.PushBack({ 130 * 4,0,130,123 });
 	Walk_forward.PushBack({ 130 * 5,0,130,123 });
@@ -475,7 +478,7 @@ void ModulePlayer::SetAnimations()
 	Walk_forward.PushBack({ 130 * 8,0,130,123 });
 
 	Walk_forward.loop = true;
-	Walk_forward.speed = 0.1 * SPEED;
+	Walk_forward.speed = 0.1 * speed;
 
 	Walk_back.PushBack({ 130 * 8,0,130,123 });
 	Walk_back.PushBack({ 130 * 7,0,130,123 });
@@ -484,13 +487,13 @@ void ModulePlayer::SetAnimations()
 	Walk_back.PushBack({ 130 * 4,0,130,123 });
 
 	Walk_back.loop = true;
-	Walk_back.speed = 0.1 * SPEED;
+	Walk_back.speed = 0.1 * speed;
 
 	Crouch.PushBack({ 130 * 3,123,130,123 });
 	Crouch.PushBack({ 130 * 4,123,130,123 });
 
 	Crouch.loop = false;
-	Crouch.speed = 0.1 * SPEED;
+	Crouch.speed = 0.1 * speed;
 
 	Standing_punch.PushBack({ 130 * 5,123,130,123 });
 	Standing_punch.PushBack({ 130 * 6,123,130,123 });
@@ -499,7 +502,7 @@ void ModulePlayer::SetAnimations()
 	Standing_punch.PushBack({ 130 * 9,123,130,123 }, RECOVERY);
 
 	Standing_punch.loop = false;
-	Standing_punch.speed = 0.1 * SPEED;
+	Standing_punch.speed = 0.1 * speed;
 
 
 	Standing_kick.PushBack({ 130 * 5,123 * 3,130,123 });
@@ -509,7 +512,7 @@ void ModulePlayer::SetAnimations()
 	Standing_kick.PushBack({ 130 * 9,123 * 3,130,123 }, RECOVERY);
 
 	Standing_kick.loop = false;
-	Standing_kick.speed = 0.1 * SPEED;
+	Standing_kick.speed = 0.1 * speed;
 
 	Crouching_kick.PushBack({ 130 * 10,123 * 3 ,130,123 });
 	Crouching_kick.PushBack({ 130 * 11,123 * 3,130,123 });
@@ -518,7 +521,7 @@ void ModulePlayer::SetAnimations()
 	Crouching_kick.PushBack({ 130  * 2,123 * 4,130,123 }, RECOVERY);
 
 	Crouching_kick.loop = false;
-	Crouching_kick.speed = 0.1 * SPEED;
+	Crouching_kick.speed = 0.1 * speed;
 
 	Crouching_punch.PushBack({ 130 * 3,123 * 2,130,123 });
 	Crouching_punch.PushBack({ 130 * 4,123 * 2,130,123 });
@@ -527,7 +530,7 @@ void ModulePlayer::SetAnimations()
 	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 }, RECOVERY);
 
 	Crouching_punch.loop = false;
-	Crouching_punch.speed = 0.1 * SPEED;
+	Crouching_punch.speed = 0.1 * speed;
 
 	Hadowken.PushBack({ 130 * 10,123  ,130,123 });
 	Hadowken.PushBack({ 130 * 11,123  ,130,123 });
@@ -536,7 +539,7 @@ void ModulePlayer::SetAnimations()
 	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
 
 	Hadowken.loop = false;
-	Hadowken.speed = 0.1 * SPEED;
+	Hadowken.speed = 0.1 * speed;
 
 	Tatsumaki.PushBack({ 130 * 8 ,123 * 2,130,123 });
 	Tatsumaki.PushBack({ 130 * 9 ,123 * 2,130,123 });
@@ -554,7 +557,7 @@ void ModulePlayer::SetAnimations()
 	Tatsumaki.PushBack({ 130 * 4 ,123 * 3,130,123 });
 
 	Tatsumaki.loop = false;
-	Tatsumaki.speed = 0.1 * SPEED;
+	Tatsumaki.speed = 0.1 * speed;
 }
 
 void ModulePlayer:: SetConfigData()
@@ -564,8 +567,13 @@ void ModulePlayer:: SetConfigData()
 
 	config = LoadConfig(config_file);
 
-	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
+	speed = config.child("speed").child("game_speed").attribute("value").as_double();
 
+	hadowken_cancelability_window = config.child("cancelability_windows").child("hadowken").attribute("value").as_int();
+	tatsumaki_cancelability_window = config.child("cancelability_windows").child("tatsumaki").attribute("value").as_int();
+	normal_moves_cancelability_window = config.child("cancelability_windows").child("normal_moves").attribute("value").as_int();
+
+	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
 	pugi::xml_node iterator = attack.first_child();
 	FillInputListFromXMLIterator(hadowken_inputs, iterator);
 
@@ -588,6 +596,8 @@ void ModulePlayer:: SetConfigData()
 	attack = config.child("cancel_values").child("crouching_kick");
 	iterator = attack.first_child();
 	FillStateListFromXMLIterator(S_Crouching_kick.cancelability, iterator);
+
+
 
 
 }

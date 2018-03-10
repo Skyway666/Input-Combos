@@ -10,9 +10,7 @@
 
 struct SDL_Texture;
 
-#define MAX_INPUT_BUFFER 50
-#define CANCELABILITY_WINDOW 20
-#define SPEED 1
+#define MAX_INPUT_BUFFER 100
 
 enum input
 {
@@ -82,10 +80,11 @@ public:
 	bool CleanUp();
 
 private:
-	//Essential to blit character
+	//Essential
 	SDL_Texture* graphics = nullptr;
 	iPoint pos;
 	Animation* current_animation;
+	double speed;
 
 	//State machine
 	character_state_enum current_state;
@@ -133,11 +132,15 @@ private:
 
 	//Related to the buffer
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
-	input Catch_first_input_within(int);
+	input Catch_first_attack_input_within(int);
 	bool Has_buffer(input, int number_of_frames);
+
 
 	//Related to canceling
 	bool Can_cancel_current_state_into(character_state_enum);
+	int hadowken_cancelability_window;
+	int tatsumaki_cancelability_window;
+	int normal_moves_cancelability_window;
 
 
 	//Functions for clarity
@@ -146,6 +149,7 @@ private:
 	void SetConfigData();
 	void FillInputListFromXMLIterator(std::list<input>&, pugi::xml_node&); 
 	void FillStateListFromXMLIterator(std::list<character_state_enum>&, pugi::xml_node&);
+	bool Is_direction_input(input);
 };
 
 #endif

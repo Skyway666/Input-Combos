@@ -1,6 +1,16 @@
 <!-- Config file for the game -->
 
 <config>
+  <speed>
+    <game_speed value ="1"/>
+  </speed>
+  
+  <cancelability_windows>
+    <hadowken value ="30"/>
+    <tatsumaki value ="30"/>
+    <normal_moves value ="10"/>
+  </cancelability_windows>
+  
   <directional_inputs>
     <hadowken>
       <input value ="down"/>
@@ -13,6 +23,7 @@
       <input value ="kick"/>
     </tatsumaki>
   </directional_inputs>
+  
   <cancel_values>
     <standing_punch>
       <attack value ="crouching_punch"/>
@@ -37,4 +48,5 @@
       <attack value ="tatsumaki"/>
     </crouching_kick>
   </cancel_values>
+  
 </config>
