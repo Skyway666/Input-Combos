@@ -131,7 +131,7 @@ private:
 	std::list<input> tatsumaki_inputs;
 	std::list<input> super_hadowken_directions;
 	std::list<input> super_hadowken_simultaneous_attacks;
-	int hadowken_detection_delay;
+	int detection_delay;
 
 	//Related to special moves
 	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
@@ -141,7 +141,7 @@ private:
 
 	//Related to the buffer
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
-	input Catch_first_attack_input_within(int);
+	input Catch_first_attack_input_within(int window,int delay = 0);
 	bool Has_buffer(input, int number_of_frames);
 
 
@@ -159,7 +159,7 @@ private:
 	void SetConfigData();
 	void FillInputListFromXMLIterator(std::list<input>&, pugi::xml_node&); 
 	void FillStateListFromXMLIterator(std::list<character_state_enum>&, pugi::xml_node&);
-	bool Is_direction_input(input);
+	bool Is_attack_input(input);
 	void Update_animation_depending_on_current_state();
 };
 

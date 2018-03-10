@@ -65,17 +65,14 @@ update_status ModulePlayer::Update()
 
 	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_DOWN)
 	{
-		button_pressed = true;
 		direction_inputs.down = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_DOWN)
 	{
-		button_pressed = true;
 		direction_inputs.left = true;
 	}
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_DOWN)
 	{
-		button_pressed = true;
 		direction_inputs.right = true;
 	}
 
@@ -96,16 +93,19 @@ update_status ModulePlayer::Update()
 	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite it. Also push input into the buffer, as movement input should be continuous
 	if (direction_inputs.down)
 	{
+		button_pressed = true;
 		Push_into_buffer(DOWN);
 		wanted_state = CROUCHING;
 	}
 	else if (direction_inputs.left)
 	{
+		button_pressed = true;
 		Push_into_buffer(LEFT);
 		wanted_state = WALKING_BACK;
 	}
 	else if (direction_inputs.right)
 	{
+		button_pressed = true;
 		Push_into_buffer(RIGHT);
 		wanted_state = WALKING_FORWARD;
 	}
@@ -136,10 +136,10 @@ update_status ModulePlayer::Update()
 	//Manage attacks
 	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame (TODO 2)
 	
-	//if (Check_for_super_hadowken())
-	//{
-	//	wanted_state = SUPER_HADOWKEN;
-	//}
+	if (Check_for_super_hadowken())
+	{
+		wanted_state = SUPER_HADOWKEN;
+	}
 	if (Check_for_tatsumaki())
 	{
 		wanted_state = TATSUMAKI;
@@ -160,8 +160,7 @@ update_status ModulePlayer::Update()
 		input current_input;
 
 		if (Current_state_is_movement())
-		/*	current_input = input_buffer[MAX_INPUT_BUFFER - 1 - hadowken_detection_delay];*/
-			current_input = input_buffer[MAX_INPUT_BUFFER - 1];
+			current_input = Catch_first_attack_input_within(10, detection_delay);
 		else
 			current_input = Catch_first_attack_input_within(normal_moves_cancelability_window);
 
@@ -284,7 +283,7 @@ bool ModulePlayer::Check_for_hadowken()
 		}
 	}
 
-	if (counter == hadowken_inputs.size() && last_detection <= MAX_INPUT_BUFFER - 1 - hadowken_detection_delay)
+	if (counter == hadowken_inputs.size() && last_detection <= MAX_INPUT_BUFFER - 1 - detection_delay)
 		return true;
 	else
 		return false;
@@ -315,13 +314,15 @@ bool ModulePlayer::Check_for_tatsumaki()
 bool ModulePlayer::Check_for_super_hadowken()
 {
 	int counter = 0;
+	//We create a copy of the simultaneous list to remove inputs when we find them
+	auto super_hadowken_simultaneous_attacks_mock = super_hadowken_simultaneous_attacks;
 	auto direction_input_iterator = super_hadowken_directions.begin();
 
 	
 	for (int i = MAX_INPUT_BUFFER - 1 - super_hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
 	{
 		//First detect directions, in which order is important
-		if (input_buffer[i] == *direction_input_iterator)
+		if (input_buffer[i] == *direction_input_iterator && counter < 2)
 		{
 			counter++;
 			if (counter < super_hadowken_directions.size()) //We don't want to access something out of the list
@@ -330,12 +331,20 @@ bool ModulePlayer::Check_for_super_hadowken()
 		//Now detect attacks, in which order is irrelevant
 		if (counter >= 2)
 		{
-			auto findIter = std::find(super_hadowken_simultaneous_attacks.begin(), super_hadowken_simultaneous_attacks.end(), input_buffer[i]);
 
+			for (std::list<input>::iterator it = super_hadowken_simultaneous_attacks_mock.begin(); it != super_hadowken_simultaneous_attacks_mock.end(); it++)
+			{
+				if (input_buffer[i] == *it)
+				{
+					counter++;
+					super_hadowken_simultaneous_attacks_mock.remove(*it);
+					break;
+				}
+			}
 		}
 	}
 
-	if (counter == super_hadowken_directions.size())
+	if (counter == super_hadowken_directions.size() + super_hadowken_simultaneous_attacks.size())
 		return true;
 	else
 		return false;
@@ -416,14 +425,14 @@ void ModulePlayer::Push_into_buffer(input input)
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
 }
 
-bool Is_attack_input(input input)
+bool ModulePlayer::Is_attack_input(input input)
 {
 	return (input == PUNCH || input == KICK);
 }
 
-input ModulePlayer::Catch_first_attack_input_within(int window)
+input ModulePlayer::Catch_first_attack_input_within(int window, int delay)
 {
-	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER; i++)
+	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER-delay; i++)
 	{
 		if (Is_attack_input(input_buffer[i]))
 		{
@@ -591,6 +600,9 @@ void ModulePlayer::Update_animation_depending_on_current_state()
 		case HADOWKEN:
 		{
 			current_animation = &Hadowken;
+			//This shouldn't be here
+			//hadowken = Particle(iPoint(pos.x + 200, pos.y + 200), iPoint(10 * speed, 0), 1000);
+			//App->particles->AddParticle(hadowken);
 			break;
 		}
 		case SUPER_HADOWKEN:
@@ -622,7 +634,7 @@ void ModulePlayer:: SetConfigData()
 	tatsumaki_cancelability_window = config.child("cancelability_windows").child("tatsumaki").attribute("value").as_int();
 	normal_moves_cancelability_window = config.child("cancelability_windows").child("normal_moves").attribute("value").as_int();
 
-	hadowken_detection_delay = config.child("detection_delay").child("hadowken").attribute("value").as_int();
+	detection_delay = config.child("detection_delay").child("hadowken").attribute("value").as_int();
 
 	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
 	pugi::xml_node iterator = attack.first_child();
