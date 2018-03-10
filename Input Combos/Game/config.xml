@@ -9,7 +9,7 @@
     <hadowken value ="20"/>
     <tatsumaki value ="20"/>
     <super_hadowken value ="20"/>
-    <normal_moves value ="10"/>
+    <normal_moves value ="20"/>
   </cancelability_windows>
   
   <directional_inputs>
@@ -34,7 +34,7 @@
   </directional_inputs>
 
   <detection_delay>
-    <hadowken value ="3"/>
+    <delay value ="5"/>
   </detection_delay>
   
   <cancel_values>

@@ -634,7 +634,7 @@ void ModulePlayer:: SetConfigData()
 	tatsumaki_cancelability_window = config.child("cancelability_windows").child("tatsumaki").attribute("value").as_int();
 	normal_moves_cancelability_window = config.child("cancelability_windows").child("normal_moves").attribute("value").as_int();
 
-	detection_delay = config.child("detection_delay").child("hadowken").attribute("value").as_int();
+	detection_delay = config.child("detection_delay").child("delay").attribute("value").as_int();
 
 	pugi::xml_node attack = config.child("directional_inputs").child("hadowken");
 	pugi::xml_node iterator = attack.first_child();
