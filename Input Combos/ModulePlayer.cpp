@@ -160,7 +160,7 @@ update_status ModulePlayer::Update()
 		input current_input;
 
 		if (Current_state_is_movement())
-			current_input = Catch_first_attack_input_within(10, detection_delay);
+			current_input = input_buffer[MAX_INPUT_BUFFER - detection_delay -1];
 		else
 			current_input = Catch_first_attack_input_within(normal_moves_cancelability_window);
 

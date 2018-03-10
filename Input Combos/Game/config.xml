@@ -9,7 +9,7 @@
     <hadowken value ="20"/>
     <tatsumaki value ="20"/>
     <super_hadowken value ="20"/>
-    <normal_moves value ="20"/>
+    <normal_moves value ="10"/>
   </cancelability_windows>
   
   <directional_inputs>
