@@ -19,7 +19,7 @@ There are three basic reasons why combos make for a good playing experience:
 
 ## Attack properties related to combos
 
-To understand how combos are created, we first need to know which are the properties of different attacks:
+To understand how combos are created, we first need to know which are the properties of attacks:
 
 - **Startup**: Amount of time that it takes for the attack to be capable of doing damage
 
@@ -57,12 +57,23 @@ This is how linking works.
 
 ### Cancelling
 
-
 Cancelling reffers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
 
 This would allow us to combo attack 2 with attack 1, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (insert visual support)
 
+Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
+
+### Juggling
+
+Juggling reffers to hitting the opponent while they are airborn in a vulnerable state, normally after a grounded attack that has launched them into the air.
 
 
+## Input combination
+
+Mostly in fighting games, it is really common to have some actions performed by pressing a combination of inputs, as the game only focuses in a really little space and two characters, the number of actions performed must be extense,
+as to make a interesting design, and this requires additional ways to input actions out of the basic ones.
+
+For example, the most commun input combination is the "Hadouken" input, which requires the player to input "down" -> "down-forward" -> "forward" -> "punch" in order to trigger the special actions. Peaple tend to mistakenly call this a 
+"combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves.
 
 
