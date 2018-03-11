@@ -48,7 +48,7 @@ Attack 2:
 - Recovery: 2
 
 Ok, lets do some maths. If we perform attack 1 and hit the opponent, after recovering from it, the opponent will still be in hitstun state for 3 (5 hitstun - 2 recovery). This means that if we do the attack 2 just after hitting attack 1, the attack 2 will 
-connect because the opponent will still be in hitstun (2 startup <= 3 hitsun). (insert visual support)
+connect because the opponent will still be in hitstun (2 startup <= 3 hitsun). (_**insert visual support**_)
 
 However, if we were to do it the other way around, we wouldn't be able to, as after hitting attack 2 we only have 2 (4 hitstun - 2 recovery) for hitting the next attack, se we can't link attack 1 (4 startup > 2 hitstun) but we could 
 link another attack 2 (2 startup <= 2 hitstun).
@@ -59,7 +59,7 @@ This is how linking works.
 
 Cancelling reffers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
 
-This would allow us to combo attack 2 with attack 1, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (insert visual support)
+This would allow us to combo attack 2 with attack 1, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (_**insert visual support**_)
 
 Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
 
@@ -74,6 +74,6 @@ Mostly in fighting games, it is really common to have some actions performed by 
 as to make a interesting design, and this requires additional ways to input actions out of the basic ones.
 
 For example, the most commun input combination is the "Hadouken" input, which requires the player to input "down" -> "down-forward" -> "forward" -> "punch" in order to trigger the special actions. Peaple tend to mistakenly call this a 
-"combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves.
+"combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. (_**insert visual support**_)
 
 
