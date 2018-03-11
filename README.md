@@ -1,4 +1,4 @@
-﻿# Reserch about combos
+﻿# Reserch about combos: Theory
 
 ## What is a combo?
 
@@ -76,4 +76,4 @@ as to make a interesting design, and this requires additional ways to input acti
 For example, the most commun input combination is the "Hadouken" input, which requires the player to input "down" -> "down-forward" -> "forward" -> "punch" in order to trigger the special actions. Peaple tend to mistakenly call this a 
 "combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. (_**insert visual support**_)
 
-
+# Reserch about combos: Code implementation
