@@ -118,7 +118,8 @@ If we were to introduce a "kick", the array would look like this:
 
 This is the function used to do it:
 
-'void ModulePlayer::Push_into_buffer(input input)
+'''
+void ModulePlayer::Push_into_buffer(input input)
 {
 	input_buffer[0] = NONE;
 
@@ -128,7 +129,8 @@ This is the function used to do it:
 	}
 
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
-}'
+}
+'''
 
 ## "Cancel" and "input combination" windows
 
