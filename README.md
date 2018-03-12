@@ -77,3 +77,21 @@ For example, the most commun input combination is the "Hadouken" input, which re
 "combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. (_**insert visual support**_)
 
 # Reserch about combos: Code implementation
+
+## Input buffer
+
+In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the current evaluated friend,
+and we can read it in any way we want to determine what actions to take.
+
+This is done in this way because of two reasons:
+
+- Cancels and links require to be executed in a really specific frame. If we didn't implement the buffer, the player would have to introduce frame perfect inputs in order to perform them. On the other hand,
+with the buffer we can read inputs performed before the time of cancelling, and if the player has introduced the input within a certain window, allow the cancel to happen. The narrower the window is, the more
+precice the input has to be.
+
+- Directional inputs can be managed in two ways if we didn't have the input buffer. We could require the player to do the combination in three consecutive frames, which is really hard to execute, or we could 
+allow it to happen when the combination is performed, regardless of the time that has passed between the different inputs, which would result in undesired directional inputs performed while playing.
+
+As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input in a certain amount of time, execute the special action.
+
+
