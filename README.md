@@ -78,7 +78,9 @@ For example, the most commun input combination is the "Hadouken" input, which re
 
 # Reserch about combos: Code implementation
 
-## Input buffer
+**Asside from providing the concept of how to implement combos from a generic code perspective, I will provide examples to implement it specifically in C++**
+
+## Input buffer 
 
 In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the current evaluated friend,
 and we can read it in any way we want to determine what actions to take.
@@ -94,11 +96,11 @@ allow it to happen when the combination is performed, regardless of the time tha
 
 As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input combination in a certain amount of time, execute the special action.
 
-The code implementation of an input buffer is basically the concept of how a queue works. My approach was to create a ordinary array, and with a function introduce new elements at the end of the array and shift the other ones. 
+The code implementation of an input buffer is basically the concept of how a queue works. My approach in C++ was to create a ordinary array, and with a function introduce new elements at the end of the array and shift the other ones. 
 The first element of the array is erased and substituted by the second one. Every frame, a new input is introduced, and if no input is introduced the elements are shifted anyways. This way we have stored
 all the inputs done previously
 
-**Example**: We have the input buffer with 5 elements of length. 
+**Example**: We have the input buffer with 5 elements of length:
 
 1. None
 2. Left
@@ -128,7 +130,6 @@ This is the function used to do it:
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
 }'
 
-
 ## "Cancel" and "input combination" windows
 
 As explained before, we need to give the player some time in order to perform a cancel or input combination. This is called a window, and it can be different for each cancel or directional input.
@@ -139,6 +140,27 @@ by the designer to modify player experience, so the code has to be ready to supp
 We can have the input buffer to be an array as large as we want it to be, and only read certain parts depending on the window of the specific move. Of course, we can't have a window to be larger than the array,
 so make sure that the array is long enough.
 
+You need to be able to perform fast iteration on this windows, so be sure to keep the value in a file and read it from the code, in order not to recompile it every time it is changed.
+
+## Input combination collisions
+
+There is times where two input combinations collide, meaning that with the same combination of moves can lead to two different combinations of inputs. 
+
+**Insert detiled example**
+The most common example of this is when with an input 
+and pressing two buttons at the same time instead of one, we get an improved version of the special move that corresponds to that combination when only pressing one button.
+
+We have two problems here:
+
+- It is really hard to press two buttons in the exact same frame
+
+- If we react directly to input combinations, as soon as we get the 
+
+
+## Reading input combinations
+
+Input combinations need to be red from files in order to provide fast iteration. My approach to it is storing every combination in a list, so it can be as long as the designer pleases. When reading the buffer
+we need to look for this combination and react to it, but only if it is within the wanted window. We also need to apply the delay needed for collisions of input combinations.
 
 
 
