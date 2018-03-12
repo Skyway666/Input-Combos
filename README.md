@@ -122,7 +122,7 @@ If we were to introduce a "kick", the array would look like this:
 
 This is the function used to do it:
 
-'''markdown
+```
 void ModulePlayer::Push_into_buffer(input input)
 {
 	input_buffer[0] = NONE;
@@ -134,7 +134,7 @@ void ModulePlayer::Push_into_buffer(input input)
 
 	input_buffer[MAX_INPUT_BUFFER-1] = input;
 }
-'''
+```
 
 ## "Cancel" and "input combination" windows
 
@@ -179,7 +179,7 @@ of simultaneous button presses and then remove the elements as they are found in
 
 
 **Example of input combination detection using delay**
-'''markdown
+```
 bool ModulePlayer::Check_for_hadowken()
 {
 	int counter = 0;
@@ -203,11 +203,11 @@ bool ModulePlayer::Check_for_hadowken()
 	else
 		return false;
 }
-'''
+```
 
 **Example of input combination detection using simultaneous button presses. Delay is not needed as there is no input bigger than the
 super hadouken in my demo, but if there was it should be applyed too**
-'''markdown
+```
 bool ModulePlayer::Check_for_super_hadowken()
 {
 	int counter = 0;
@@ -246,5 +246,5 @@ bool ModulePlayer::Check_for_super_hadowken()
 	else
 		return false;
 }
-'''
+```
 
