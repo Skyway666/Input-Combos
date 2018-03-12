@@ -73,7 +73,11 @@ Juggling reffers to hitting the opponent while they are airborn in a vulnerable 
 Mostly in fighting games, it is really common to have some actions performed by pressing a combination of inputs, as the game only focuses in a really little space and two characters, the number of actions performed must be extense,
 as to make a interesting design, and this requires additional ways to input actions out of the basic ones.
 
-For example, the most commun input combination is the "Hadouken" input, which requires the player to input "down" -> "down-forward" -> "forward" -> "punch" in order to trigger the special actions. Peaple tend to mistakenly call this a 
+For example, the most commun input combination is the "Hadouken" input, which requires the player to input:
+
+-"down" -> "down-forward" -> "forward" -> "punch"
+
+in order to trigger the special actions. Peaple tend to mistakenly call this a 
 "combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. (_**insert visual support**_)
 
 # Reserch about combos: Code implementation
@@ -118,7 +122,7 @@ If we were to introduce a "kick", the array would look like this:
 
 This is the function used to do it:
 
-'''
+'''markdown
 void ModulePlayer::Push_into_buffer(input input)
 {
 	input_buffer[0] = NONE;
@@ -148,21 +152,99 @@ You need to be able to perform fast iteration on this windows, so be sure to kee
 
 There is times where two input combinations collide, meaning that with the same combination of moves can lead to two different combinations of inputs. 
 
-**Insert detiled example**
-The most common example of this is when with an input 
-and pressing two buttons at the same time instead of one, we get an improved version of the special move that corresponds to that combination when only pressing one button.
+The best way to explain this is with a practical example:
 
-We have two problems here:
+We have the normal hadouken and the improved hadouken:
 
-- It is really hard to press two buttons in the exact same frame
+- Hadouken: "down" -> "down-forward" -> "forward" -> "punch"
 
-- If we react directly to input combinations, as soon as we get the 
+- Improved Hadouken: "down" -> "down-forward" -> "forward" -> "punch + punch"(two punches at the same time)
 
+There would be no problem at handling simultaneous button presses, as we have the windows to manage it. The problem is that if we react to normal
+Hadouken inmediatly, we would never be able to get the improved one, as upon recieving its sequence, it would reproduce normal Hadouken inmediatly. The only way
+to handle this is by delaying the detection of input combinations.
+
+This means that if when we get the final "punch" to execute the hadowken, the input is the first one in the input buffer, we should wait some frames
+to detect if another punch has been pressed. If it has, give priority to the improved Hadouken, by simply checking for it first instead of checking 
+for the normal Hadouken. There should be a priority list created from a file that could easily be modified by the designer in order to stablish said 
+priorities.
 
 ## Reading input combinations
 
 Input combinations need to be red from files in order to provide fast iteration. My approach to it is storing every combination in a list, so it can be as long as the designer pleases. When reading the buffer
-we need to look for this combination and react to it, but only if it is within the wanted window. We also need to apply the delay needed for collisions of input combinations.
+we need to look for this combination and react to it, but only if it is within the wanted window. We also need to apply the delay needed for collisions of input combinations. 
+
+Keep in mind that simultaneous button presses can be inputed in any order, so my approach is to store them in a separated lists, make a copy of the list
+of simultaneous button presses and then remove the elements as they are found in the list, in order not to have the same input checked twice.
 
 
+**Example of input combination detection using delay**
+'''markdown
+bool ModulePlayer::Check_for_hadowken()
+{
+	int counter = 0;
+	int last_detection = 0;
+	auto input_iterator = hadowken_inputs.begin();
+
+	for (int i = MAX_INPUT_BUFFER - 1 - hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
+	{
+
+		if (input_buffer[i] == *input_iterator)
+		{
+			counter++;
+			last_detection = i;
+			if(counter < hadowken_inputs.size()) //We don't want to access something out of the list
+			input_iterator++;
+		}
+	}
+
+	if (counter == hadowken_inputs.size() && last_detection <= MAX_INPUT_BUFFER - 1 - detection_delay)
+		return true;
+	else
+		return false;
+}
+'''
+
+**Example of input combination detection using simultaneous button presses. Delay is not needed as there is no input bigger than the
+super hadouken in my demo, but if there was it should be applyed too**
+'''markdown
+bool ModulePlayer::Check_for_super_hadowken()
+{
+	int counter = 0;
+	//We create a copy of the simultaneous list to remove inputs when we find them
+	auto super_hadowken_simultaneous_attacks_mock = super_hadowken_simultaneous_attacks;
+	auto direction_input_iterator = super_hadowken_directions.begin();
+
+	
+	for (int i = MAX_INPUT_BUFFER - 1 - super_hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
+	{
+		//First detect directions, in which order is important
+		if (input_buffer[i] == *direction_input_iterator && counter < 2)
+		{
+			counter++;
+			if (counter < super_hadowken_directions.size()) //We don't want to access something out of the list
+				direction_input_iterator++;
+		}
+		//Now detect attacks, in which order is irrelevant
+		if (counter >= super_hadowken_directions.size())
+		{
+
+			for (std::list<input>::iterator it = super_hadowken_simultaneous_attacks_mock.begin(); it != super_hadowken_simultaneous_attacks_mock.end(); it++)
+			{
+				if (input_buffer[i] == *it)
+				{
+					counter++;
+					super_hadowken_simultaneous_attacks_mock.remove(*it);
+					break;
+				}
+			}
+		}
+	}
+
+	if (counter == super_hadowken_directions.size() + super_hadowken_simultaneous_attacks.size())
+		return true;
+	else
+		return false;
+}
+'''
 

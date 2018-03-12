@@ -329,7 +329,7 @@ bool ModulePlayer::Check_for_super_hadowken()
 				direction_input_iterator++;
 		}
 		//Now detect attacks, in which order is irrelevant
-		if (counter >= 2)
+		if (counter >= super_hadowken_directions.size())
 		{
 
 			for (std::list<input>::iterator it = super_hadowken_simultaneous_attacks_mock.begin(); it != super_hadowken_simultaneous_attacks_mock.end(); it++)
