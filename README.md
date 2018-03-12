@@ -114,6 +114,20 @@ If we were to introduce a "kick", the array would look like this:
 4. Punch
 5. Kick
 
+This is the function used to do it:
+
+'void ModulePlayer::Push_into_buffer(input input)
+{
+	input_buffer[0] = NONE;
+
+	for (int i = 0; i < MAX_INPUT_BUFFER; i++)
+	{
+		input_buffer[i] = input_buffer[i+1];
+	}
+
+	input_buffer[MAX_INPUT_BUFFER-1] = input;
+}'
+
 
 ## "Cancel" and "input combination" windows
 
