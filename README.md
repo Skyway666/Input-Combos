@@ -178,7 +178,7 @@ Keep in mind that simultaneous button presses can be inputed in any order, so my
 of simultaneous button presses and then remove the elements as they are found in the list, in order not to have the same input checked twice.
 
 
-**Example of input combination detection using delay**
+**Example of input combination detection using delay.**
 ```
 bool ModulePlayer::Check_for_hadowken()
 {
@@ -205,8 +205,8 @@ bool ModulePlayer::Check_for_hadowken()
 }
 ```
 
-**Example of input combination detection using simultaneous button presses. Delay is not needed as there is no input bigger than the
-super hadouken in my demo, but if there was it should be applyed too**
+**Example of input combination detection using simultaneous button presses. Delay is not needed as there is no input combination bigger than the
+super hadouken in my demo, but if there was it should be applyed too.**
 ```
 bool ModulePlayer::Check_for_super_hadowken()
 {
