@@ -92,6 +92,39 @@ precice the input has to be.
 - Directional inputs can be managed in two ways if we didn't have the input buffer. We could require the player to do the combination in three consecutive frames, which is really hard to execute, or we could 
 allow it to happen when the combination is performed, regardless of the time that has passed between the different inputs, which would result in undesired directional inputs performed while playing.
 
-As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input in a certain amount of time, execute the special action.
+As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input combination in a certain amount of time, execute the special action.
+
+The code implementation of an input buffer is basically the concept of how a queue works. My approach was to create a ordinary array, and with a function introduce new elements at the end of the array and shift the other ones. 
+The first element of the array is erased and substituted by the second one. Every frame, a new input is introduced, and if no input is introduced the elements are shifted anyways. This way we have stored
+all the inputs done previously
+
+**Example**: We have the input buffer with 5 elements of length. 
+
+1. None
+2. Left
+3. Right
+4. None
+5. Punch
+
+If we were to introduce a "kick", the array would look like this:
+
+1. Left
+2. Right
+3. None
+4. Punch
+5. Kick
+
+
+## "Cancel" and "input combination" windows
+
+As explained before, we need to give the player some time in order to perform a cancel or input combination. This is called a window, and it can be different for each cancel or directional input.
+
+Larger windows makes for easier cancels/directional inputs, but can lead to undesired outcomes, while narrower windows provide more difficulty but also more presition. This can be used as a tool
+by the designer to modify player experience, so the code has to be ready to support it. Fortunately, it is not really hard.
+
+We can have the input buffer to be an array as large as we want it to be, and only read certain parts depending on the window of the specific move. Of course, we can't have a window to be larger than the array,
+so make sure that the array is long enough.
+
+
 
 
