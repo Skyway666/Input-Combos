@@ -92,7 +92,7 @@ For example, the most commun input combination is the "Hadouken" input, which re
 in order to trigger the special actions. Peaple tend to mistakenly call this a 
 "combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. 
 
-![](https://github.com/Skyway666/Input-Combos/blob/master/Wiki%20images/Hadouken%20de%20los%20huevos.png)
+![](https://cdn.discordapp.com/attachments/280075256729698305/423169612801376257/Hadouken_de_los_huevos.png)
 
 _Fist for the image found in worldartsme.com, FIRST PUNCH OUTLINE CLIPART IMAGE #1_
 
