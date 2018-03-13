@@ -435,7 +435,8 @@ struct character_state
 ```
 - To know if the animation frame is cancelable or not, we create a struct that will be managed by the class "Animation"
 with a _SDL_Rect_ and an enum called _animation_state_, which will consist of STARTUP, ACTIVE and RECOVERY.
-Then we create a function that returns the state of the animation. If it is ACTIVE we allow the cancel to happen.
+Then we create a function that returns the state of the animation. If it is ACTIVE we allow the cancel to happen. In most fighting games
+cancels are only allowed if the attack has hit the opponent, but we'll ignore that for the sake of simplicity.
 
 
 Finally, the code to manage the change of state would look like this:
