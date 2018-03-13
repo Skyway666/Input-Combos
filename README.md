@@ -57,7 +57,7 @@ link another _attack 2_ (2 startup <= 2 hitstun).
 
 This is how linking works.
 
-(_**video of example**_)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/m_kPN9QeHXs?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ### Cancelling
 
@@ -67,7 +67,7 @@ This would allow us to combo _attack 2_ with _attack 1_, as the histun that the 
 
 Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
 
-(_**video of example**_)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/fTF1z7SP0Xk?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ### Juggling
 
@@ -259,8 +259,3 @@ bool ModulePlayer::Check_for_super_hadowken()
 		return false;
 }
 ```
-
-
-# TEST
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/AOeY-nDp7hI?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
