@@ -76,6 +76,10 @@ Juggling reffers to hitting the opponent while they are airborn in a vulnerable 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ZdnvoK2bdKc?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 
+**Now that we know how to combo... We can can have a bit of fun!!**
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/szbqQ_Lh72A?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 ## Input combination
 
 Mostly in fighting games, it is really common to have some actions performed by pressing a combination of inputs, as the game only focuses in a really little space and two characters, the number of actions performed must be extense,
