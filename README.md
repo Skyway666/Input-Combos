@@ -119,21 +119,13 @@ The code implementation of an input buffer is basically the concept of how a que
 The first element of the array is erased and substituted by the second one. Every frame, a new input is introduced, and if no input is introduced the elements are shifted anyways. This way we have stored
 all the inputs done previously
 
-**Example**: We have the input buffer with 5 elements of length:
+**Example**: We have the input buffer with 10 elements of length:
 
-1. None
-2. Left
-3. Right
-4. None
-5. Punch
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_shifting_1.png)
 
-If we were to introduce a "kick", the array would look like this:
+If we were to introduce a "left", the array would look like this:
 
-1. Left
-2. Right
-3. None
-4. Punch
-5. Kick
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_shifting_2.png)
 
 This is the function used to do it:
 
@@ -163,7 +155,7 @@ so make sure that the array is long enough.
 
 You need to be able to perform fast iteration on this windows, so be sure to keep the value in a file and read it from the code, in order not to recompile it every time it is changed.
 
-(_**picture of a buffer**_)
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_window.png)
 
 ## Input combination collisions
 
@@ -173,9 +165,9 @@ The best way to explain this is with a practical example:
 
 We have the normal hadouken and the improved hadouken:
 
-- Hadouken: "down" -> "down-forward" -> "forward" -> "punch"
+- Hadouken: "down" -> "forward" -> "punch"
 
-- Improved Hadouken: "down" -> "down-forward" -> "forward" -> "punch + punch"(two punches at the same time)
+- Improved Hadouken: "down" -> "forward" -> "punch + punch"(two punches at the same time)
 
 There would be no problem at handling simultaneous button presses, as we have the windows to manage it. The problem is that if we react to normal
 Hadouken inmediatly, we would never be able to get the improved one, as upon recieving its sequence, it would reproduce normal Hadouken inmediatly. The only way
@@ -186,6 +178,8 @@ to detect if another punch has been pressed. If it has, give priority to the imp
 for the normal Hadouken. There should be a priority list created from a file that could easily be modified by the designer in order to stablish said 
 priorities.
 
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_delay.png)
+
 ## Reading input combinations
 
 Input combinations need to be red from files in order to provide fast iteration. My approach to it is storing every combination in a list, so it can be as long as the designer pleases. When reading the buffer
@@ -194,7 +188,14 @@ we need to look for this combination and react to it, but only if it is within t
 Keep in mind that simultaneous button presses can be inputed in any order, so my approach is to store them in a separated lists, make a copy of the list
 of simultaneous button presses and then remove the elements as they are found in the list, in order not to have the same input checked twice.
 
-(_**picture of input buffer**_)?
+
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_detection_1.png)
+
+_In this example, a hadouken is not detected_
+
+![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_detection_2.png)
+
+_In this example, a hadouken is detected_
 
 **Example of input combination detection using delay.**
 ```
