@@ -171,12 +171,12 @@ We have the normal hadouken and the improved hadouken:
 
 There would be no problem at handling simultaneous button presses, as we have the windows to manage it. The problem is that if we react to normal
 Hadouken inmediatly, we would never be able to get the improved one, as upon recieving its sequence, it would reproduce normal Hadouken inmediatly. The only way
-to handle this is by delaying the detection of input combinations.
+to handle this is by delaying the detection of smaller input combinations.
 
 This means that if when we get the final "punch" to execute the hadowken, the input is the first one in the input buffer, we should wait some frames
 to detect if another punch has been pressed. If it has, give priority to the improved Hadouken, by simply checking for it first instead of checking 
 for the normal Hadouken. There should be a priority list created from a file that could easily be modified by the designer in order to stablish said 
-priorities.
+priorities. The delay should not be used when reading the larger input combinations.
 
 ![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_delay.png)
 
@@ -473,3 +473,4 @@ Finally, the code to manage the change of state would look like this:
 
 ```
 
+You can see my code demo [here] (https://github.com/Skyway666/Input-Combos).
