@@ -2,20 +2,20 @@
 
 ## What is a combo?
 
-The term "combo" is an abreviation of "combination". It can have various meanings, but this reserch focuses on the meaning given mostly by games that imply hand on hand combat, such as Fighting games, Beat em ups and Hack and
+The term "combo" is an abbreviation of "combination". It can have various meanings, but this reserch focuses on the meaning given mostly by games that imply hand on hand combat, such as Fighting games, Beat em ups and Hack and
 Slash games. 
 
-**A combo is an unescapable combination of attacks**
+**A combo is an inescapable combination of attacks**
 
 ## Why are combos a good addition 
 
 There are three basic reasons why combos make for a good player experience:
 
-- They give the player a feeling of superiority over their enemies, as while preforming a combo, most of the time there is nothing that the opponent can do.
+- They give the player a feeling of superiority over their enemies, as while performing a combo, most of the time there is nothing that the opponent can do.
 
 - There is a certain visual appeal in seeing a fighter perform flashy combinations of attacks.
 
-- Combos make the player feel skillful, as they imply a lot of fast and powerful attacks. If the combo itself is difficult to execute, the effect is increased.
+- Combos make the player feel skilful, as they imply a lot of fast and powerful attacks. If the combo itself is difficult to execute, the effect is increased.
 
 ## Attack properties related to combos
 
@@ -27,7 +27,7 @@ To understand how combos are created, we first need to know which are the proper
 
 - **Recovery**: After dealing damage, amount of time that has to pass in order for the attackant to do any action.
 
-There are much more properties to attacks, but those are the basic ones to understand how combos work. Basicaly, to create a combo, we need to attack the opponent while they are not able to move because of the hitstun state.
+There are much more properties to attacks, but those are the basic ones to understand how combos work. Basically, to create a combo, we need to attack the opponent while they are not able to move because of the hitstun state.
 
 ## Ways of creating a combo
 
@@ -61,9 +61,9 @@ This is how linking works.
 
 ### Cancelling
 
-Cancelling reffers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
+Cancelling refers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
 
-This would allow us to combo _attack 2_ with _attack 1_, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time.
+This would allow us to combo _attack 2_ with _attack 1_, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to subtract the recovery this time.
 
 Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
 
@@ -71,12 +71,12 @@ Most of the time, just some attacks can be cancelled into others, this is a esse
 
 ### Juggling
 
-Juggling reffers to hitting the opponent while they are airborn in a vulnerable state, normally after a grounded attack that has launched them into the air.
+Juggling refers to hitting the opponent while they are airborn in a vulnerable state, normally after a grounded attack that has launched them into the air.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ZdnvoK2bdKc?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 
-**Now that we know how to combo... We can can have a bit of fun!!**
+**Now that we know how to combo... We can have a bit of fun!!**
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/szbqQ_Lh72A?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
@@ -85,11 +85,11 @@ Juggling reffers to hitting the opponent while they are airborn in a vulnerable 
 Mostly in fighting games, it is really common to have some actions performed by pressing a combination of inputs, as the game only focuses in a really little space and two characters, the number of actions performed must be extense,
 as to make a interesting design, and this requires additional ways to input actions out of the basic ones.
 
-For example, the most commun input combination is the "Hadouken" input, which requires the player to input:
+For example, the most common input combination is the "Hadouken" input, which requires the player to input:
 
 -"down" -> "down-forward" -> "forward" -> "punch"
 
-in order to trigger the special actions. Peaple tend to mistakenly call this a 
+in order to trigger the special actions. People tend to mistakenly call this a 
 "combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. 
 
 ![](Wiki%20images/Hadowken%20input%20image.png)
@@ -98,22 +98,22 @@ _Fist for the image found in worldartsme.com, FIRST PUNCH OUTLINE CLIPART IMAGE 
 
 # Research about combos: Code implementation
 
-**Asside from providing the concept of how to implement combos from a generic code perspective, I will provide examples to implement it specifically in C++**
+**Aside from providing the concept of how to implement combos from a generic code perspective, I will provide examples to implement it specifically in C++**
 
 ## Input buffer 
 
-In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the currently evaluated frane,
+In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the currently evaluated frame,
 and we can read it in any way we want to determine what actions to take.
 
 This is done in this way because of two reasons:
 
 - Cancels and links require to be executed in a really specific frame. If we didn't implement the buffer, the player would have to introduce frame perfect inputs in order to perform them. On the other hand,
 with the buffer we can read inputs performed before the time of cancelling, and if the player has introduced the input within a certain window, allow the cancel to happen. The narrower the window is, the more
-precice the input has to be.
+precise the input has to be.
 
 - Directional inputs can be managed in two ways if we didn't have the input buffer. We could require the player to do the combination in three consecutive frames, which is really hard to execute, or we could 
 allow it to happen when the combination is performed, regardless of the time that has passed between the different inputs, which would result in undesired directional inputs performed while playing. 
-As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input combination in a certain amount of time, execute the special action.
+As you can see, both decisions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input combination in a certain amount of time, execute the special action.
 
 The code implementation of an input buffer is basically the concept of how a queue works. My approach in C++ was to create a ordinary array, and with a function introduce new elements at the end of the array and shift the other ones. 
 The first element of the array is erased and substituted by the second one. Every frame, a new input is introduced, and if no input is introduced the elements are shifted anyways. This way we have stored
@@ -147,7 +147,7 @@ void ModulePlayer::Push_into_buffer(input input)
 
 As explained before, we need to give the player some time in order to perform a cancel or input combination. This is called a window, and it can be different for each cancel or directional input.
 
-Larger windows makes for easier cancels/directional inputs, but can lead to undesired outcomes, while narrower windows provide more difficulty but also more presition. This can be used as a tool
+Larger windows makes for easier cancels/directional inputs, but can lead to undesired outcomes, while narrower windows provide more difficulty but also more precision. This can be used as a tool
 by the designer to modify player experience, so the code has to be ready to support it. Fortunately, it is not really hard.
 
 We can have the input buffer to be an array as large as we want it to be, and only read certain parts depending on the window of the specific move. Of course, we can't have a window to be larger than the array,
@@ -170,12 +170,12 @@ We have the normal hadouken and the improved hadouken:
 - Improved Hadouken: "down" -> "forward" -> "punch + punch"(two punches at the same time)
 
 There would be no problem at handling simultaneous button presses, as we have the windows to manage it. The problem is that if we react to normal
-Hadouken inmediatly, we would never be able to get the improved one, as upon recieving its sequence, it would reproduce normal Hadouken inmediatly. The only way
+Hadouken immediately, we would never be able to get the improved one, as upon recieving its sequence, it would reproduce normal Hadouken first. The only way
 to handle this is by delaying the detection of smaller input combinations.
 
 This means that if when we get the final "punch" to execute the hadowken, the input is the first one in the input buffer, we should wait some frames
 to detect if another punch has been pressed. If it has, give priority to the improved Hadouken, by simply checking for it first instead of checking 
-for the normal Hadouken. There should be a priority list created from a file that could easily be modified by the designer in order to stablish said 
+for the normal Hadouken. There should be a priority list created from a file that could easily be modified by the designer in order to establish said 
 priorities. The delay should not be used when reading the larger input combinations.
 
 ![](https://github.com/Skyway666/Input-Combos/raw/master/Wiki%20images/Input_buffer_delay.png)
@@ -225,7 +225,7 @@ bool ModulePlayer::Check_for_hadowken()
 ```
 
 **Example of input combination detection using simultaneous button presses. Delay is not needed as there is no input combination bigger than the
-super hadouken in my demo, but if there was it should be applyed too.**
+super hadouken in my demo, but if there was it should be applied too.**
 ```
 bool ModulePlayer::Check_for_super_hadowken()
 {
@@ -273,7 +273,7 @@ Now that we have all the tools to read the buffer in order to see what inputs we
 how to detect when a special move has happened, it's time to program the combo system.
 
 First we should build a solid state machine, which will divide the inputs and the states of the character. This is 
-specially important in fighting games, as characters have lots of states, and they react to inputs in a different way
+especially important in fighting games, as characters have lots of states, and they react to inputs in a different way
 depending on it.
 
 ### State machine
@@ -288,18 +288,18 @@ in order to keep track of the directions pressed.
 
 As said before, depending on the input and the state of the player, we will request different states. 
 
-If some direction is pressed, we request movement inmediatly, and if an attack is pressed it will overwrite it.
+If some direction is pressed, we request movement immediatly, and if an attack is pressed it will overwrite it.
 
-We should only be pushing one direction in the buffer at a time, combinations of directions are supported as independent inputs, and when recieving opposite directions we 
+We should only be pushing one direction in the buffer at a time, combinations of directions are supported as independent inputs, and when receiving opposite directions we 
 should prioritize one of them. 
 
-Then we detect attacks. Those are not requested inmediatly, instead they are pushed into the buffer, as we need to evaluate the buffer first.
+Then we detect attacks. Those are not requested immediatly, instead they are pushed into the buffer, as we need to evaluate the buffer first.
 
 Now we check the buffer, and if no input combination has been performed, we request attacks. Remember to apply the
-delay for combo collision, otherwise you will detect input combinations while the player is already preforming a punch.
+delay for combo collision, otherwise you will detect input combinations while the player is already performing a punch.
 
 When requesting an attack, use the cancelability window of attacks already, meaning that you will set the wanted state
-not depending on the attack pressed this frame but the ones that have been inputed before, this is really important 
+not depending on the attack pressed this frame but the ones that have been inputted before, this is really important 
 for cancelling.
 
 ```
@@ -409,15 +409,15 @@ input ModulePlayer::Catch_first_attack_input_within(int window, int delay)
 ### Assign current state
 
 When assigning the current state from the wanted state, we first need to check the current state. If it is a neutral state,
-such as normal movement, or crouching, which can be canceled at any time, we directly update the current state and assign the
-new animation (with any other consequences the begining of the animation might have).
+such as normal movement, or crouching, which can be cancelled at any time, we directly update the current state and assign the
+new animation (with any other consequences the beginning of the animation might have).
 
 If on the other hand, the current state is not movement, things get trickier. As said before, cancels only happen in certain frames
-of the animation, and certain moves can only be canceled in certain others. We need to store all this information,
+of the animation, and certain moves can only be cancelled in certain others. We need to store all this information,
 and my approach is as follows:
 
 - To store the cancelability values, we set up an _struct_ with a state and a list of states, that represent all the states
-in which the state is cancelable. 
+in which the state is cancellable. 
 
 **Character state struct**
 ```
@@ -436,7 +436,7 @@ struct character_state
 	}
 };
 ```
-- To know if the animation frame is cancelable or not, we create a struct that will be managed by the class "Animation"
+- To know if the animation frame is cancellable or not, we create a struct that will be managed by the class "Animation"
 with a _SDL_Rect_ and an enum called _animation_state_, which will consist of STARTUP, ACTIVE and RECOVERY.
 Then we create a function that returns the state of the animation. If it is ACTIVE we allow the cancel to happen. In most fighting games
 cancels are only allowed if the attack has hit the opponent, but we'll ignore that for the sake of simplicity.
