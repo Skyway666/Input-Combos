@@ -214,16 +214,19 @@ update_status ModulePlayer::Update()
 	{
 		case WALKING_FORWARD:
 		{
+			if(pos.x < 800)
 			pos.x += 5 * speed;
 			break;
 		}
 		case WALKING_BACK:
 		{
+			if (pos.x > 0)
 			pos.x -= 5 * speed;
 			break;
 		}
 		case TATSUMAKI:
 		{
+			if (pos.x < 800)
 			pos.x += 7 * speed;
 			break;
 		}

@@ -398,3 +398,70 @@ input ModulePlayer::Catch_first_attack_input_within(int window, int delay)
 	return NONE;
 }
 ```
+
+### Assign current state
+
+When assigning the current state from the wanted state, we first need to check the current state. If it is a neutral state,
+such as normal movement, or crouching, which can be canceled at any time, we directly update the current state and assign the
+new animation (with any other consequences the begining of the animation might have).
+
+If on the other hand, the current state is not movement, things get trickier. As said before, cancels only happen in certain frames
+of the animation, and certain moves can only be canceled in certain others. We need to store all this information,
+and my approach is as follows:
+
+- To store the cancelability values, we set up an _struct_ with a state and a list of states, that represent all the states
+in which the state is cancelable. 
+
+**Character state struct**
+```
+struct character_state
+{
+	character_state_enum state;
+	std::list<character_state_enum> cancelability;
+	bool IsCancelableInto(character_state_enum wanted_state)
+	{
+		for (std::list<character_state_enum>::iterator it = cancelability.begin(); it != cancelability.end(); it++)
+		{
+			if (*it == wanted_state)
+			return true;
+		}
+		return false;
+	}
+};
+```
+- To know if the animation frame is cancelable or not, we create a struct that will be managed by the class "Animation"
+with a _SDL_Rect_ and an enum called _animation_state_, which will consist of STARTUP, ACTIVE and RECOVERY.
+Then we create a function that returns the state of the animation. If it is ACTIVE we allow the cancel to happen.
+
+
+Finally, the code to manage the change of state would look like this:
+
+**Code to manage change of state**
+```
+	if (Current_state_is_movement())
+	{
+		current_state = wanted_state;
+		Update_animation_depending_on_current_state();
+	}
+	else
+	{ 
+		if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
+		{
+			current_state = wanted_state;
+			Update_animation_depending_on_current_state();
+		}
+		else if (current_animation->Finished())
+		{
+		current_state = IDLE;
+		Standing_punch.Reset();
+		Hadowken.Reset();
+		Crouching_punch.Reset();
+		Tatsumaki.Reset();
+		Standing_kick.Reset();
+		Crouching_kick.Reset();
+		Update_animation_depending_on_current_state();
+		}
+	}
+
+```
+
