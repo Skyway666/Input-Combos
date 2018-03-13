@@ -23,7 +23,7 @@ To understand how combos are created, we first need to know which are the proper
 
 - **Startup**: Amount of time that it takes for the attack to be capable of doing damage
 
-- **Hitstun**: Once the attack has delt damage, the amount of time that the enemy character is not able to move when he has been hit
+- **Hitstun**: Once the attack has dealt damage, the amount of time that the enemy character is not able to move when he has been hit
 
 - **Recovery**: After dealing damage, amount of time that has to pass in order for the attackant to do any action.
 
