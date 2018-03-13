@@ -473,4 +473,4 @@ Finally, the code to manage the change of state would look like this:
 
 ```
 
-You can see my code demo [here] (https://github.com/Skyway666/Input-Combos).
+You can see my code demo [here](https://github.com/Skyway666/Input-Combos).
