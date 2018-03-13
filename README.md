@@ -2,7 +2,7 @@
 
 ## What is a combo?
 
-The term "combo" is an abreviation of "combination". It can have various meanings, but the focus of this reserch is the meaning given mostly by games that imply hand on hand combat, such as Fighting games, Beat em ups and Hack and
+The term "combo" is an abreviation of "combination". It can have various meanings, but this reserch focuses on the meaning given mostly by games that imply hand on hand combat, such as Fighting games, Beat em ups and Hack and
 Slash games. 
 
 **A combo is an unescapable combination of attacks**
@@ -37,35 +37,43 @@ The easier way to explain how linking works is to put an example:
 
 Attack 1:
 
-- Startup: 4
-- Hitstun: 5
-- Recovery: 2
+- Startup: 4 frames
+- Hitstun: 5 frames
+- Recovery: 2 frames
 
 Attack 2:
 
-- Startup: 2
-- Hitstun: 4
-- Recovery: 2
+- Startup: 2 frames
+- Hitstun: 4 frames
+- Recovery: 2 frames
 
-Ok, lets do some maths. If we perform attack 1 and hit the opponent, after recovering from it, the opponent will still be in hitstun state for 3 (5 hitstun - 2 recovery). This means that if we do the attack 2 just after hitting attack 1, the attack 2 will 
-connect because the opponent will still be in hitstun (2 startup <= 3 hitsun). (_**insert visual support**_)
+Ok, lets do some maths. If we perform _attack 1_ and hit the opponent, after recovering from it, the opponent will still be in hitstun state for 3 frames (5 hitstun - 2 recovery). 
 
-However, if we were to do it the other way around, we wouldn't be able to, as after hitting attack 2 we only have 2 (4 hitstun - 2 recovery) for hitting the next attack, se we can't link attack 1 (4 startup > 2 hitstun) but we could 
-link another attack 2 (2 startup <= 2 hitstun).
+This means that if we do the _attack 2_ just after hitting _attack 1_, the _attack 2_ will 
+connect because the opponent will still be in hitstun (2 startup <= 3 hitsun). 
+
+However, if we were to do it the other way around, we wouldn't be able to, as after hitting _attack 2_ we only have 2 (4 hitstun - 2 recovery) for hitting the next attack, so we can't link _attack 1_ (4 startup > 2 hitstun) but we could 
+link another _attack 2_ (2 startup <= 2 hitstun).
 
 This is how linking works.
+
+(_**video of example**_)
 
 ### Cancelling
 
 Cancelling reffers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
 
-This would allow us to combo attack 2 with attack 1, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (_**insert visual support**_)
+This would allow us to combo _attack 2_ with _attack 1_, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (_**insert visual support**_)
 
 Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
+
+(_**video of example**_)
 
 ### Juggling
 
 Juggling reffers to hitting the opponent while they are airborn in a vulnerable state, normally after a grounded attack that has launched them into the air.
+
+(_**video of example**_)
 
 
 ## Input combination
@@ -78,7 +86,9 @@ For example, the most commun input combination is the "Hadouken" input, which re
 -"down" -> "down-forward" -> "forward" -> "punch"
 
 in order to trigger the special actions. Peaple tend to mistakenly call this a 
-"combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. (_**insert visual support**_)
+"combo", but while the special moves triggered by input combinations can be part of combos, they are not combos by themselves. 
+
+(_**picture of the hadowken input**_)
 
 # Reserch about combos: Code implementation
 
@@ -86,7 +96,7 @@ in order to trigger the special actions. Peaple tend to mistakenly call this a
 
 ## Input buffer 
 
-In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the current evaluated friend,
+In order to implement combos as well as directional inputs, we need to have an **input buffer**. The input buffer will store the inputs that the player has done the frames before the currently evaluated frane,
 and we can read it in any way we want to determine what actions to take.
 
 This is done in this way because of two reasons:
@@ -96,8 +106,7 @@ with the buffer we can read inputs performed before the time of cancelling, and 
 precice the input has to be.
 
 - Directional inputs can be managed in two ways if we didn't have the input buffer. We could require the player to do the combination in three consecutive frames, which is really hard to execute, or we could 
-allow it to happen when the combination is performed, regardless of the time that has passed between the different inputs, which would result in undesired directional inputs performed while playing.
-
+allow it to happen when the combination is performed, regardless of the time that has passed between the different inputs, which would result in undesired directional inputs performed while playing. 
 As you can see, both desitions are bad ones, so what we need to do is read the input buffer and if the player has introduced the input combination in a certain amount of time, execute the special action.
 
 The code implementation of an input buffer is basically the concept of how a queue works. My approach in C++ was to create a ordinary array, and with a function introduce new elements at the end of the array and shift the other ones. 
@@ -148,6 +157,8 @@ so make sure that the array is long enough.
 
 You need to be able to perform fast iteration on this windows, so be sure to keep the value in a file and read it from the code, in order not to recompile it every time it is changed.
 
+(_**picture of a buffer**_)
+
 ## Input combination collisions
 
 There is times where two input combinations collide, meaning that with the same combination of moves can lead to two different combinations of inputs. 
@@ -177,6 +188,7 @@ we need to look for this combination and react to it, but only if it is within t
 Keep in mind that simultaneous button presses can be inputed in any order, so my approach is to store them in a separated lists, make a copy of the list
 of simultaneous button presses and then remove the elements as they are found in the list, in order not to have the same input checked twice.
 
+(_**picture of input buffer**_)?
 
 **Example of input combination detection using delay.**
 ```
