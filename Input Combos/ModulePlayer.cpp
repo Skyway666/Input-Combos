@@ -156,7 +156,6 @@ update_status ModulePlayer::Update()
 	{
 		input current_input = Catch_first_attack_input_within(normal_moves_cancelability_window, detection_delay);
 
-
 		switch (current_input)
 		{
 			case PUNCH:

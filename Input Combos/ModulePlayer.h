@@ -50,16 +50,9 @@ struct character_state
 	character_state_enum state;
 	std::list<character_state_enum> cancelability;
 
-	bool is_movement;
-
-	character_state(character_state_enum _state, bool _is_movement = false)
+	character_state(character_state_enum _state)
 	{
 		state = _state;
-		is_movement = _is_movement;
-	}
-	bool operator==(character_state comparison)
-	{
-		return state == comparison.state;
 	}
 	bool IsCancelableInto(character_state_enum wanted_state)
 	{
@@ -115,10 +108,10 @@ private:
 	character_state S_Hadowken = character_state(HADOWKEN);
 	character_state S_Tatsumaki = character_state(TATSUMAKI);
 	//Movement
-	character_state S_Walk_forward = character_state(WALKING_FORWARD, true);
-	character_state S_Walk_back = character_state(WALKING_BACK, true);
-	character_state S_Crouch = character_state(CROUCHING, true);
-	character_state S_Idle = character_state(IDLE, true);
+	character_state S_Walk_forward = character_state(WALKING_FORWARD);
+	character_state S_Walk_back = character_state(WALKING_BACK);
+	character_state S_Crouch = character_state(CROUCHING);
+	character_state S_Idle = character_state(IDLE);
 
 	//Particles
 	Particle hadowken;
