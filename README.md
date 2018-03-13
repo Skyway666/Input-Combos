@@ -1,4 +1,4 @@
-﻿# Reserch about combos: Theory
+﻿# Research about combos: Theory
 
 ## What is a combo?
 
@@ -9,7 +9,7 @@ Slash games.
 
 ## Why are combos a good addition 
 
-There are three basic reasons why combos make for a good playing experience:
+There are three basic reasons why combos make for a good player experience:
 
 - They give the player a feeling of superiority over their enemies, as while preforming a combo, most of the time there is nothing that the opponent can do.
 
@@ -52,7 +52,7 @@ Ok, lets do some maths. If we perform _attack 1_ and hit the opponent, after rec
 This means that if we do the _attack 2_ just after hitting _attack 1_, the _attack 2_ will 
 connect because the opponent will still be in hitstun (2 startup <= 3 hitsun). 
 
-However, if we were to do it the other way around, we wouldn't be able to, as after hitting _attack 2_ we only have 2 (4 hitstun - 2 recovery) for hitting the next attack, so we can't link _attack 1_ (4 startup > 2 hitstun) but we could 
+However, if we were to do it the other way around, we wouldn't be able to, as after hitting _attack 2_ we only have 2 frames (4 hitstun - 2 recovery) for hitting the next attack, so we can't link _attack 1_ (4 startup > 2 hitstun) but we could 
 link another _attack 2_ (2 startup <= 2 hitstun).
 
 This is how linking works.
@@ -96,7 +96,7 @@ in order to trigger the special actions. Peaple tend to mistakenly call this a
 
 _Fist for the image found in worldartsme.com, FIRST PUNCH OUTLINE CLIPART IMAGE #1_
 
-# Reserch about combos: Code implementation
+# Research about combos: Code implementation
 
 **Asside from providing the concept of how to implement combos from a generic code perspective, I will provide examples to implement it specifically in C++**
 
