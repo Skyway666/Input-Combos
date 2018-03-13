@@ -142,7 +142,6 @@ private:
 	//Related to the buffer
 	void Push_into_buffer(input);		//Pushes an input into the buffer, and shifts all the others
 	input Catch_first_attack_input_within(int window,int delay = 0);
-	bool Has_buffer(input, int number_of_frames);
 
 
 	//Related to canceling

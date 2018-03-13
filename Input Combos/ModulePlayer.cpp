@@ -91,6 +91,8 @@ update_status ModulePlayer::Update()
 
 	//Manage movement
 	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite it. Also push input into the buffer, as movement input should be continuous
+
+	//We use "else if" because we don't want the character to move back nor forward while crouching
 	if (direction_inputs.down)
 	{
 		button_pressed = true;
@@ -134,7 +136,7 @@ update_status ModulePlayer::Update()
 	}
 
 	//Manage attacks
-	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame (TODO 2)
+	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame 
 	
 	if (Check_for_super_hadowken())
 	{
@@ -148,21 +150,11 @@ update_status ModulePlayer::Update()
 	{
 		wanted_state = HADOWKEN;
 	}
-	
-	
-	
-
-
 	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
 	//depending on the current state, you may want different actions(TODO 3)
 	else
 	{
-		input current_input;
-
-		if (Current_state_is_movement())
-			current_input = input_buffer[MAX_INPUT_BUFFER - detection_delay -1];
-		else
-			current_input = Catch_first_attack_input_within(normal_moves_cancelability_window);
+		input current_input = Catch_first_attack_input_within(normal_moves_cancelability_window, detection_delay);
 
 
 		switch (current_input)
@@ -442,18 +434,6 @@ input ModulePlayer::Catch_first_attack_input_within(int window, int delay)
 	return NONE;
 }
 
-bool ModulePlayer::Has_buffer(input looking_for, int window)
-{
-	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER; i++)
-	{
-		if (input_buffer[i] == looking_for)
-		{
-			return true;
-		}
-	}
-	return false;
-}
-
 void ModulePlayer::SetAnimations()
 {
 	Idle.PushBack({ 0,0,130,123 });
@@ -600,9 +580,6 @@ void ModulePlayer::Update_animation_depending_on_current_state()
 		case HADOWKEN:
 		{
 			current_animation = &Hadowken;
-			//This shouldn't be here
-			//hadowken = Particle(iPoint(pos.x + 200, pos.y + 200), iPoint(10 * speed, 0), 1000);
-			//App->particles->AddParticle(hadowken);
 			break;
 		}
 		case SUPER_HADOWKEN:
@@ -665,11 +642,8 @@ void ModulePlayer:: SetConfigData()
 	attack = config.child("cancel_values").child("crouching_kick");
 	iterator = attack.first_child();
 	FillStateListFromXMLIterator(S_Crouching_kick.cancelability, iterator);
-
-
-
-
 }
+
 pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
 {
 	pugi::xml_node ret;

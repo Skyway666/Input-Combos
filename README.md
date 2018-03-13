@@ -63,7 +63,7 @@ This is how linking works.
 
 Cancelling reffers to cancel the animation of a move with another animation. Cancelling normally happens only when the attack has already done damage, meaning that we skip the recovery time of the move we cancel.
 
-This would allow us to combo _attack 2_ with _attack 1_, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time. (_**insert visual support**_)
+This would allow us to combo _attack 2_ with _attack 1_, as the histun that the attack 2 provides is equal to the startup of the attack 1, and we don't have to substract the recovery this time.
 
 Most of the time, just some attacks can be cancelled into others, this is a essential part of the design of fighting games.
 
@@ -73,7 +73,7 @@ Most of the time, just some attacks can be cancelled into others, this is a esse
 
 Juggling reffers to hitting the opponent while they are airborn in a vulnerable state, normally after a grounded attack that has launched them into the air.
 
-(_**video of example**_)
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ZdnvoK2bdKc?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 
 ## Input combination
@@ -257,5 +257,144 @@ bool ModulePlayer::Check_for_super_hadowken()
 		return true;
 	else
 		return false;
+}
+```
+
+## Cancelling implementation
+
+Now that we have all the tools to read the buffer in order to see what inputs were executed previously, and we know 
+how to detect when a special move has happened, it's time to program the combo system.
+
+First we should build a solid state machine, which will divide the inputs and the states of the character. This is 
+specially important in fighting games, as characters have lots of states, and they react to inputs in a different way
+depending on it.
+
+### State machine
+
+My approach is to create an _enum_ of "inputs" and another one with "states". We always have a wanted state and a current state,
+and depending on the situation we will decide weather if to allow the wanted state to be the current one or not.
+
+Detection of directions and attacks need to be separated, as they are used for different things. We will use _bools_
+in order to keep track of the directions pressed.
+
+### Requesting states
+
+As said before, depending on the input and the state of the player, we will request different states. 
+
+If some direction is pressed, we request movement inmediatly, and if an attack is pressed it will overwrite it.
+
+We should only be pushing one direction in the buffer at a time, combinations of directions are supported as independent inputs, and when recieving opposite directions we 
+should prioritize one of them. 
+
+Then we detect attacks. Those are not requested inmediatly, instead they are pushed into the buffer, as we need to evaluate the buffer first.
+
+Now we check the buffer, and if no input combination has been performed, we request attacks. Remember to apply the
+delay for combo collision, otherwise you will detect input combinations while the player is already preforming a punch.
+
+When requesting an attack, use the cancelability window of attacks already, meaning that you will set the wanted state
+not depending on the attack pressed this frame but the ones that have been inputed before, this is really important 
+for cancelling.
+
+```
+	//Manage movement
+	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite it. Also push input into the buffer, as movement input should be continuous
+
+	//We use "else if" because we don't want the character to move back nor forward while crouching
+	if (direction_inputs.down)
+	{
+		button_pressed = true;
+		Push_into_buffer(DOWN);
+		wanted_state = CROUCHING;
+	}
+	else if (direction_inputs.left)
+	{
+		button_pressed = true;
+		Push_into_buffer(LEFT);
+		wanted_state = WALKING_BACK;
+	}
+	else if (direction_inputs.right)
+	{
+		button_pressed = true;
+		Push_into_buffer(RIGHT);
+		wanted_state = WALKING_FORWARD;
+	}
+	else
+	{
+		wanted_state = IDLE;
+	}
+
+	//Read attack inputs
+	//Check attack inputs and push them into the buffer
+	if (App->input->keyboard[SDL_SCANCODE_A] == KEY_DOWN)
+	{
+ 		Push_into_buffer(PUNCH);
+		button_pressed = true;
+	}
+	if (App->input->keyboard[SDL_SCANCODE_S] == KEY_DOWN)
+	{
+		Push_into_buffer(KICK);
+		button_pressed = true;
+	}
+
+	//We need to move the buffer in all the frames in order to keep only the last inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
+	if(!button_pressed)
+	{
+		Push_into_buffer(NONE); 
+	}
+
+	//Manage attacks
+	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame 
+	
+	if (Check_for_super_hadowken())
+	{
+		wanted_state = SUPER_HADOWKEN;
+	}
+	else if (Check_for_tatsumaki())
+	{
+		wanted_state = TATSUMAKI;
+	}
+	else if (Check_for_hadowken())
+	{
+		wanted_state = HADOWKEN;
+	}
+	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
+	//depending on the current state, you may want different actions
+	else
+	{
+		input current_input = Catch_first_attack_input_within(normal_moves_cancelability_window, detection_delay);
+
+		switch (current_input)
+		{
+			case PUNCH:
+			{
+				if (direction_inputs.down)
+					wanted_state = CROUCHING_PUNCHING;
+				else
+					wanted_state = STANDING_PUNCHING;
+				break;
+			}
+			case KICK:
+			{
+				if (direction_inputs.down)
+					wanted_state = CROUCHING_KICKING;
+				else
+					wanted_state = STANDING_KICKING;
+				break;
+			}
+		}
+	}
+```
+**Function used to get the attack inputs of previous frames**
+```
+input ModulePlayer::Catch_first_attack_input_within(int window, int delay)
+{
+	for (int i = (MAX_INPUT_BUFFER - window - 1); i < MAX_INPUT_BUFFER-delay; i++)
+	{
+		if (Is_attack_input(input_buffer[i]))
+		{
+			return input_buffer[i];
+		}
+	}
+	return NONE;
 }
 ```
