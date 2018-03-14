@@ -456,18 +456,14 @@ Finally, the code to manage the change of state would look like this:
 		if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
 		{
 			current_state = wanted_state;
+			current_animation->Reset();
 			Update_animation_depending_on_current_state();
 		}
 		else if (current_animation->Finished())
 		{
-		current_state = IDLE;
-		Standing_punch.Reset();
-		Hadowken.Reset();
-		Crouching_punch.Reset();
-		Tatsumaki.Reset();
-		Standing_kick.Reset();
-		Crouching_kick.Reset();
-		Update_animation_depending_on_current_state();
+			current_state = IDLE;
+			current_animation->Reset();
+			Update_animation_depending_on_current_state();
 		}
 	}
 
