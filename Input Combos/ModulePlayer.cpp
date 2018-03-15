@@ -26,10 +26,8 @@ bool ModulePlayer::Init()
 
 	// Fill the input buffer with invalid inputs
 	for (int i = 0; i < MAX_INPUT_BUFFER; i++)
-	{
 		input_buffer[i] = NONE;
-	}	
-	
+
 	//Set config data
 	SetConfigData();
 	//Ser animations
@@ -38,9 +36,6 @@ bool ModulePlayer::Init()
 	pos.x = 425;
 	pos.y = 300;
 
-	
-	
-	
 	current_animation = &Idle;
 	return true;
 }
@@ -64,34 +59,26 @@ update_status ModulePlayer::Update()
 	bool button_pressed = false;
 
 	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_DOWN)
-	{
 		direction_inputs.down = true;
-	}
+
 	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_DOWN)
-	{
 		direction_inputs.left = true;
-	}
+
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_DOWN)
-	{
 		direction_inputs.right = true;
-	}
+
 
 	if (App->input->keyboard[SDL_SCANCODE_DOWN] == KEY_UP)
-	{
 		direction_inputs.down = false;
-	}
+
 	if (App->input->keyboard[SDL_SCANCODE_LEFT] == KEY_UP)
-	{
 		direction_inputs.left = false;
-	}
+
 	if (App->input->keyboard[SDL_SCANCODE_RIGHT] == KEY_UP)
-	{
 		direction_inputs.right = false;
-	}
 
 	//Manage movement
 	//If movement is done it will be recorded as wanted state, but if an attack is preformed it will overwrite it. Also push input into the buffer, as movement input should be continuous
-
 	//We use "else if" because we don't want the character to move back nor forward while crouching
 	if (direction_inputs.down)
 	{
@@ -112,9 +99,7 @@ update_status ModulePlayer::Update()
 		wanted_state = WALKING_FORWARD;
 	}
 	else
-	{
 		wanted_state = IDLE;
-	}
 
 	//Read attack inputs
 	//Check attack inputs and push them into the buffer
@@ -131,25 +116,17 @@ update_status ModulePlayer::Update()
 
 	//We need to move the buffer in all the frames in order to keep only the last 20 inputs, therefore if no button has been pressed, we push a "NONE" input into the buffer
 	if(!button_pressed)
-	{
 		Push_into_buffer(NONE); 
-	}
 
 	//Manage attacks
 	//Check if a special move has been performed, as they have priority over all other moves. If it has, assign the wanted action to be executed in this frame 
 	
 	if (Check_for_super_hadowken())
-	{
 		wanted_state = SUPER_HADOWKEN;
-	}
 	else if (Check_for_tatsumaki())
-	{
 		wanted_state = TATSUMAKI;
-	}
 	else if (Check_for_hadowken())
-	{
 		wanted_state = HADOWKEN;
-	}
 	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
 	//depending on the current state, you may want different actions(TODO 3)
 	else
@@ -230,21 +207,21 @@ update_status ModulePlayer::Update()
 	//Debug
 	switch (current_animation->GetState())
 	{
-	case STARTUP:
-	{
-		App->render->DrawQuad({ 0,0,200,200 }, 0, 255, 0, 255, 0);
-		break;
-	}
-	case ACTIVE:
-	{
-		App->render->DrawQuad({ 200,0,200,200 }, 0, 0, 255, 255, 0);
-		break;
-	}
-	case RECOVERY:
-	{
-		App->render->DrawQuad({ 400,0,200,200 }, 255, 0, 0, 255, 0);
-		break;
-	}
+		case STARTUP:
+		{
+			App->render->DrawQuad({ 0,0,200,200 }, 0, 255, 0, 255, 0);
+			break;
+		}
+		case ACTIVE:
+		{
+			App->render->DrawQuad({ 200,0,200,200 }, 0, 0, 255, 255, 0);
+			break;
+		}
+		case RECOVERY:
+		{
+			App->render->DrawQuad({ 400,0,200,200 }, 255, 0, 0, 255, 0);
+			break;
+		}
 	}
 
 
@@ -308,7 +285,6 @@ bool ModulePlayer::Check_for_super_hadowken()
 	auto super_hadowken_simultaneous_attacks_mock = super_hadowken_simultaneous_attacks;
 	auto direction_input_iterator = super_hadowken_directions.begin();
 
-	
 	for (int i = MAX_INPUT_BUFFER - 1 - super_hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
 	{
 		//First detect directions, in which order is important
@@ -474,7 +450,6 @@ void ModulePlayer::SetAnimations()
 
 	Standing_punch.loop = false;
 	Standing_punch.speed = 0.1 * speed;
-
 
 	Standing_kick.PushBack({ 130 * 5,123 * 3,130,123 });
 	Standing_kick.PushBack({ 130 * 6,123  *3,130,123 });
@@ -645,7 +620,6 @@ void ModulePlayer:: SetConfigData()
 pugi::xml_node ModulePlayer::LoadConfig(pugi::xml_document& config_file) const
 {
 	pugi::xml_node ret;
-
 	pugi::xml_parse_result result = config_file.load_file("config.xml");
 
 	if (result == NULL)
