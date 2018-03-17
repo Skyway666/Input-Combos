@@ -4,14 +4,14 @@
 #include "SDL/include/SDL_rect.h"
 #define MAX_FRAMES 500
 
-enum fighting_state
-{
+enum fighting_state {
+
 	STARTUP,
 	ACTIVE,
 	RECOVERY
 };
-struct fighting_frame
-{
+struct fighting_frame {
+
 	fighting_frame()
 	{
 
@@ -27,8 +27,7 @@ struct fighting_frame
 
 };
 
-class Animation
-{
+class Animation {
 public:
 	bool loop = true;
 	bool pingpong = false;

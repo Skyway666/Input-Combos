@@ -175,7 +175,10 @@ update_status ModulePlayer::Update()
 		}
 		else if (current_animation->Finished())
 		{
-			current_state = IDLE;
+			if (direction_inputs.down)
+				current_state = CROUCHING;
+			else
+				current_state = IDLE;
 			current_animation->Reset();
 			Update_animation_depending_on_current_state();
 		}
