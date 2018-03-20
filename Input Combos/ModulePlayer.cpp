@@ -450,6 +450,14 @@ void ModulePlayer::SetAnimations()
 	Standing_punch.PushBack({ 130 * 7,123,130,123 });
 	Standing_punch.PushBack({ 130 * 8,123,130,123 }, ACTIVE);
 	Standing_punch.PushBack({ 130 * 9,123,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 0,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130 * 2,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130 * 3,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 0,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130 * 2,0,130,123 }, RECOVERY);
+	Standing_punch.PushBack({ 130 * 3,0,130,123 }, RECOVERY);
 
 	Standing_punch.loop = false;
 	Standing_punch.speed = 0.1 * speed;
@@ -459,6 +467,14 @@ void ModulePlayer::SetAnimations()
 	Standing_kick.PushBack({ 130 * 7,123 * 3,130,123 });
 	Standing_kick.PushBack({ 130 * 8,123 * 3,130,123 }, ACTIVE);
 	Standing_kick.PushBack({ 130 * 9,123 * 3,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 0,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130 * 2,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130 * 3,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 0,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130 * 2,0,130,123 }, RECOVERY);
+	Standing_kick.PushBack({ 130 * 3,0,130,123 }, RECOVERY);
 
 	Standing_kick.loop = false;
 	Standing_kick.speed = 0.1 * speed;
@@ -468,6 +484,14 @@ void ModulePlayer::SetAnimations()
 	Crouching_kick.PushBack({ 0       ,123 * 4,130,123 });
 	Crouching_kick.PushBack({ 130     ,123 * 4,130,123 }, ACTIVE);
 	Crouching_kick.PushBack({ 130  * 2,123 * 4,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_kick.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
 
 	Crouching_kick.loop = false;
 	Crouching_kick.speed = 0.1 * speed;
@@ -477,6 +501,14 @@ void ModulePlayer::SetAnimations()
 	Crouching_punch.PushBack({ 130 * 5,123 * 2,130,123 });
 	Crouching_punch.PushBack({ 130 * 6,123 * 2,130,123 }, ACTIVE);
 	Crouching_punch.PushBack({ 130 * 7,123 * 2,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
+	Crouching_punch.PushBack({ 130 * 4,123,130,123 }, RECOVERY);
 
 	Crouching_punch.loop = false;
 	Crouching_punch.speed = 0.1 * speed;
@@ -486,6 +518,14 @@ void ModulePlayer::SetAnimations()
 	Hadowken.PushBack({ 0		,123 * 2,130,123 });
 	Hadowken.PushBack({ 130     ,123 * 2,130,123 });
 	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 });
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
+	Hadowken.PushBack({ 130 * 2 ,123 * 2,130,123 }, RECOVERY);
 
 	Hadowken.loop = false;
 	Hadowken.speed = 0.1 * speed;
