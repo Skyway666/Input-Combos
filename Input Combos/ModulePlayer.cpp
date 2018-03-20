@@ -54,7 +54,17 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
-	//Read movement inputs
+	requestState();
+	updateState();
+	update();
+	debugDraw();
+	draw();
+
+	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::requestState() 	{
+		//Read movement inputs
 	// Check what directions are being pressed tis frame and which are being released. Update directional bools
 	bool button_pressed = false;
 
@@ -129,12 +139,10 @@ update_status ModulePlayer::Update()
 		wanted_state = HADOWKEN;
 	//If no special move has been performed, assign the wanted action depending on the last input that has been pressed (last one in the input buffer). Mind that 
 	//depending on the current state, you may want different actions(TODO 3)
-	else
-	{
+	else {
 		input current_input = Catch_first_attack_input_within(normal_moves_cancelability_window, detection_delay);
 
-		switch (current_input)
-		{
+		switch (current_input) {
 			case PUNCH:
 			{
 				if (direction_inputs.down)
@@ -153,28 +161,25 @@ update_status ModulePlayer::Update()
 			}
 		}
 	}
+}
 
+void ModulePlayer::updateState() 	{
 	// Check if the wanted state is different from the current state. If it is, we check if the current state can be canceled with
 	// Cancelable_current_state(), and if it is cancelable, we set the current state to the wanted one. If it is not cancelable, we need to make sure that when the current 
 	// animation is finished, the current state goes back to the wanted state in this frame, and the animation which was being done is reset. After that, we update the 
 	// animation depending on the current state. 
-	// (TODO 4)
 
-	if (Current_state_is_movement())
-	{
+	if (Current_state_is_movement()) {
 		current_state = wanted_state;
 		Update_animation_depending_on_current_state();
 	}
-	else
-	{ 
-		if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE)
-		{
+	else {
+		if (Can_cancel_current_state_into(wanted_state) && current_animation->GetState() == ACTIVE) {
 			current_state = wanted_state;
 			current_animation->Reset();
 			Update_animation_depending_on_current_state();
 		}
-		else if (current_animation->Finished())
-		{
+		else if (current_animation->Finished()) {
 			if (direction_inputs.down)
 				current_state = CROUCHING;
 			else
@@ -183,33 +188,36 @@ update_status ModulePlayer::Update()
 			Update_animation_depending_on_current_state();
 		}
 	}
+}
 
+void ModulePlayer::update() 	{
 	// Movement
-	switch (current_state)
-	{
+	switch (current_state) {
 		case WALKING_FORWARD:
 		{
-			if(pos.x < 800)
-			pos.x += 5 * speed;
+			if (pos.x < 800)
+				pos.x += 5 * speed;
 			break;
 		}
 		case WALKING_BACK:
 		{
 			if (pos.x > 0)
-			pos.x -= 5 * speed;
+				pos.x -= 5 * speed;
 			break;
 		}
 		case TATSUMAKI:
 		{
 			if (pos.x < 800)
-			pos.x += 7 * speed;
+				pos.x += 7 * speed;
 			break;
 		}
 	}
+}
+
+void ModulePlayer::debugDraw() 	{
 
 	//Debug
-	switch (current_animation->GetState())
-	{
+	switch (current_animation->GetState()) {
 		case STARTUP:
 		{
 			App->render->DrawQuad({ 0,0,200,200 }, 0, 255, 0, 255, 0);
@@ -226,15 +234,11 @@ update_status ModulePlayer::Update()
 			break;
 		}
 	}
-
-
-	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 130*4, 123*4);
-
-
-
-	return UPDATE_CONTINUE;
 }
 
+void ModulePlayer::draw() 	{
+	App->render->Blit(graphics, pos.x, pos.y, &current_animation->GetCurrentFrame(), 130 * 4, 123 * 4);
+}
 bool ModulePlayer::Check_for_hadowken()
 {
 	int counter = 0;
@@ -243,7 +247,6 @@ bool ModulePlayer::Check_for_hadowken()
 
 	for (int i = MAX_INPUT_BUFFER - 1 - hadowken_cancelability_window; i < MAX_INPUT_BUFFER; i++)
 	{
-
 		if (input_buffer[i] == *input_iterator)
 		{
 			counter++;

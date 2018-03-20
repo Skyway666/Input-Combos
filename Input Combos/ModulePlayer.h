@@ -80,6 +80,11 @@ private:
 	iPoint pos;
 	Animation* current_animation;
 	double speed;
+	void requestState();
+	void updateState();
+	void update();
+	void debugDraw();
+	void draw();
 
 	//State machine
 	character_state_enum current_state;
@@ -125,6 +130,7 @@ private:
 	std::list<input> super_hadowken_directions;
 	std::list<input> super_hadowken_simultaneous_attacks;
 	int detection_delay;
+
 
 	//Related to special moves
 	bool Check_for_hadowken();			//Checks the input buffer looking for the hadowken button combination
