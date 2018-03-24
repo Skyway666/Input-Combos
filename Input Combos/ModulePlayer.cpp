@@ -164,11 +164,6 @@ void ModulePlayer::requestState() 	{
 }
 
 void ModulePlayer::updateState() 	{
-	// Check if the wanted state is different from the current state. If it is, we check if the current state can be canceled with
-	// Cancelable_current_state(), and if it is cancelable, we set the current state to the wanted one. If it is not cancelable, we need to make sure that when the current 
-	// animation is finished, the current state goes back to the wanted state in this frame, and the animation which was being done is reset. After that, we update the 
-	// animation depending on the current state. 
-
 	if (Current_state_is_movement()) {
 		current_state = wanted_state;
 		Update_animation_depending_on_current_state();
