@@ -470,7 +470,9 @@ Finally, the code to manage the change of state would look like this:
 ```
 
 You can download the playable demo [here](https://github.com/Skyway666/Input-Combos/releases/tag/1.0)
+
 You can dowload the exercices here [here]()
+
 You can see my code [here](https://github.com/Skyway666/Input-Combos).
 
 
