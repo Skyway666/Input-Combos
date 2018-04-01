@@ -1,4 +1,8 @@
-﻿# Research about combos: Theory
+I am [Lucas García Mateu](https://www.linkedin.com/in/lucas-garc%C3%ADa-mateu-517a0b160/), student of [Bachelor’s Degree in
+Video Games by UPC at CITM](https://www.citm.upc.edu/ing/estudis/graus-videojocs/). This content is generated for the second year’s
+subject Project 2, under supervision of lecturer [Ricard Pillosu](https://es.linkedin.com/in/ricardpillosu).
+
+# Research about combos: Theory
 
 ## What is a combo?
 
@@ -471,7 +475,7 @@ Finally, the code to manage the change of state would look like this:
 
 You can download the playable demo [here](https://github.com/Skyway666/Input-Combos/releases/tag/1.0)
 
-You can dowload the exercices here [here]()
+You can dowload the exercices here [here](https://github.com/Skyway666/Input-Combos/releases/tag/0)
 
 You can see my code [here](https://github.com/Skyway666/Input-Combos).
 
