@@ -1,0 +1,4 @@
+TODOS:
+- Implement Push into buffer() function
+- Implement update_State() function (cancel management)
+- Implement Check_for_tatsumaki() function

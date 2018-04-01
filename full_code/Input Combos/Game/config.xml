@@ -1,0 +1,66 @@
+<!-- Config file for the game -->
+
+<config>
+  <speed>
+    <game_speed value ="1"/>
+  </speed>
+  
+  <cancelability_windows>
+    <hadowken value ="20"/>
+    <tatsumaki value ="20"/>
+    <super_hadowken value ="20"/>
+    <normal_moves value ="10"/>
+  </cancelability_windows>
+  
+  <directional_inputs>
+    <hadowken>
+      <input value ="down"/>
+      <input value ="right"/>
+      <input value ="punch"/>
+    </hadowken>
+    <tatsumaki>
+      <input value ="down"/>
+      <input value ="left"/>
+      <input value ="kick"/>
+    </tatsumaki>
+    <super_hadowken>
+      <input value ="down"/>
+      <input value ="right"/>
+      <simultaneous>
+        <input value ="punch"/>
+        <input value ="kick"/>
+      </simultaneous>
+    </super_hadowken>
+  </directional_inputs>
+
+  <detection_delay>
+    <delay value ="5"/>
+  </detection_delay>
+  
+  <cancel_values>
+    <standing_punch>
+      <attack value ="crouching_punch"/>
+      <attack value ="standing_kick"/>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </standing_punch>
+    <crouching_punch>
+      <attack value ="standing_kick"/>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </crouching_punch>
+    <standing_kick>
+      <attack value ="crouching_kick"/>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+    </standing_kick>
+    <crouching_kick>
+      <attack value ="hadowken"/>
+      <attack value ="tatsumaki"/>
+      <attack value ="super_hadowken"/>
+    </crouching_kick>
+  </cancel_values>
+  
+</config>
