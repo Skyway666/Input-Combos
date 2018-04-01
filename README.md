@@ -1,6 +1,6 @@
 I am [Lucas García Mateu](https://www.linkedin.com/in/lucas-garc%C3%ADa-mateu-517a0b160/), student of [Bachelor’s Degree in
 Video Games by UPC at CITM](https://www.citm.upc.edu/ing/estudis/graus-videojocs/). This content is generated for the second year’s
-subject Project 2, under supervision of lecturer [Ricard Pillos](https://es.linkedin.com/in/ricardpillosu).
+subject Project 2, under supervision of lecturer [Ricard Pillosu](https://es.linkedin.com/in/ricardpillosu).
 
 # Research about combos: Theory
 
